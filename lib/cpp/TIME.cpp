@@ -44,11 +44,11 @@ void TIME_class::MainDisplayFunction() {
                     {
                         Beep(BEEP_SHORT, TONE_LOW);
                     }
-                    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
-                    {
-                        IData.SHOTCLOCK = TWO_DIGIT_DASH;
-                        ISystem.SC_TIME_MODE = TIME_RESET;
-                    }
+                    // if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
+                    // {
+                    //     IData.SHOTCLOCK = TWO_DIGIT_DASH;
+                    //     ISystem.SC_TIME_MODE = TIME_RESET;
+                    // }
                     IData.TIME_SECOND--;
                 }
                 else

@@ -32,6 +32,8 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
     const bool isAwayDownPressed = digitalRead(AWAY_DOWN);
     const bool isTimeMinPressed  = digitalRead(TIME_MIN);
     const bool isTimeSecPressed  = digitalRead(TIME_SEC);
+    const bool isSCPresetPressed = digitalRead(SC_PRESET);
+    const bool isSCOnOffPressed  = digitalRead(SC_STARTSTOP);
 
     if (((buttonPins[i] == HOME_UP && !isHomeDownPressed) || (buttonPins[i] == HOME_DOWN && !isHomeUpPressed)))
     {
@@ -168,21 +170,37 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 break;
             case SC_PRESET:
-                if(IData.SHOTCLOCK == TWO_DIGIT_DASH) return;
-                if(IData.SHOTCLOCK != 24)
+                if(!isSCOnOffPressed) return;
+                if(IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
-                    if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
                     IData.SHOTCLOCK = 24;
+                    Beep(BEEP_SHORT, TONE_HIGH);
                 }
-                else if(!holdButton)
+                else
                 {
-                    IData.SHOTCLOCK = 14;
+                    if(!holdButton)
+                    {   
+                        if(ISystem.SC_TIME_MODE != TIME_RUNNING)
+                        {
+                            IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
+                        }
+                        else if(IData.SHOTCLOCK >= 23 && IData.TIME_SC_MS > 8)
+                        {
+                            IData.SHOTCLOCK = 14;
+                        }
+                        else if(IData.SHOTCLOCK != 24)
+                        {
+                            IData.SHOTCLOCK = 24;
+                        }
+                        Beep(BEEP_SHORT, TONE_HIGH);
+                    }
+                    if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
                 }
-                if(!holdButton) Beep(BEEP_SHORT, TONE_HIGH);
                 IData.TIME_SC_MS = 0;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
+                if(!isSCPresetPressed) return;
                 if(holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
                     ISystem.SC_TIME_MODE = TIME_RESET;
