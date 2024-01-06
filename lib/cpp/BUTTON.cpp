@@ -184,7 +184,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                         {
                             IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
                         }
-                        else if(IData.SHOTCLOCK >= 23 && IData.TIME_SC_MS > 8)
+                        else if(IData.SHOTCLOCK == 24 && IData.TIME_SC_MS > 7)
                         {
                             IData.SHOTCLOCK = 14;
                         }
@@ -196,7 +196,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                     }
                     if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
                 }
-                IData.TIME_SC_MS = 0;
+                IData.TIME_SC_MS = 9;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
