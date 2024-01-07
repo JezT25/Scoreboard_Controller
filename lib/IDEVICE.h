@@ -56,7 +56,7 @@ class IDATA {
         volatile unsigned int TIME_MINUTE       =    0;
 
         // volatile unsigned int TIME_SECOND       =    0;
-        volatile unsigned int TIME_SECOND       =    15;
+        volatile unsigned int TIME_SECOND       =    20;
 
         volatile unsigned int TIME_MS           =    0;
 

@@ -7,7 +7,7 @@
 void TIME_class::EndHander() {
     if(endSC && millis() - prev_SCEnd >= BEEP_EX_LONG)
     {
-        IData.SHOTCLOCK = 24;
+        IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : 24;
         endSC = false;
     }
 
@@ -26,6 +26,12 @@ void TIME_class::EndHander() {
 }
 
 void TIME_class::MainDisplayFunction() {
+    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
+    {
+        IData.SHOTCLOCK = TWO_DIGIT_DASH;
+        ISystem.SC_TIME_MODE = TIME_RESET;
+    }
+
     if(ISystem.TIME_MODE == TIME_ADJUST)
     {
         original_MIN = IData.TIME_MINUTE;
@@ -43,11 +49,6 @@ void TIME_class::MainDisplayFunction() {
                     if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND <= 10)
                     {
                         Beep(BEEP_SHORT, TONE_LOW);
-                    }
-                    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
-                    {
-                        IData.SHOTCLOCK = TWO_DIGIT_DASH;
-                        ISystem.SC_TIME_MODE = TIME_RESET;
                     }
                     IData.TIME_SECOND--;
                 }

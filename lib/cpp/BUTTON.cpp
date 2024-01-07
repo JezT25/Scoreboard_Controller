@@ -170,37 +170,33 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 break;
             case SC_PRESET:
-                if(!isSCOnOffPressed) return;
-                if(IData.SHOTCLOCK == TWO_DIGIT_DASH)
-                {
-                    IData.SHOTCLOCK = 24;
+                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(!holdButton)
+                {   
+                    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
+                    {
+                        IData.SHOTCLOCK = IData.TIME_SECOND < 14 ? IData.SHOTCLOCK = TWO_DIGIT_DASH : 14;
+                    }
+                    else if(ISystem.SC_TIME_MODE != TIME_RUNNING)
+                    {
+                        IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
+                    }
+                    else if(IData.SHOTCLOCK == 24 && IData.TIME_SC_MS > 7)
+                    {
+                        IData.SHOTCLOCK = 14;
+                    }
+                    else if(IData.SHOTCLOCK != 24)
+                    {
+                        IData.SHOTCLOCK = 24;
+                    }
                     Beep(BEEP_SHORT, TONE_HIGH);
                 }
-                else
-                {
-                    if(!holdButton)
-                    {   
-                        if(ISystem.SC_TIME_MODE != TIME_RUNNING)
-                        {
-                            IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
-                        }
-                        else if(IData.SHOTCLOCK == 24 && IData.TIME_SC_MS > 7)
-                        {
-                            IData.SHOTCLOCK = 14;
-                        }
-                        else if(IData.SHOTCLOCK != 24)
-                        {
-                            IData.SHOTCLOCK = 24;
-                        }
-                        Beep(BEEP_SHORT, TONE_HIGH);
-                    }
-                    if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
-                }
+                if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
                 IData.TIME_SC_MS = 9;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
-                if(!isSCPresetPressed) return;
+                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST) return;
                 if(holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
                     ISystem.SC_TIME_MODE = TIME_RESET;
