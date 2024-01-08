@@ -34,7 +34,6 @@
 
 #define POWER_OFF           0
 #define POWER_ON            1
-#define POWER_IDLE          2
 
 class IDATA {
     public:

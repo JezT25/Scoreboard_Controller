@@ -9,6 +9,7 @@
 
 /** LIBRARIES **/
 #include <Arduino.h>
+#include "LowPower.h"
 
 #include "IDEVICE.h"
 IDATA IData;

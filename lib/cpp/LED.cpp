@@ -150,44 +150,18 @@ void LED_class::RefreshBuffer() {
 }
 
 void LED_class::DisplayDigits() {
-    if(ISystem.POWER_STATE == POWER_OFF)
+    digitalWrite(LED_Section[currentSegment], LOW);
+    currentSegment = (currentSegment + 1) % 4;
+    for (int segment = 0; segment < 4; segment++)
     {
-        for (int segment = 0; segment < 4; segment++)
+        for (int j = 0; j < 7; j++)
         {
-            for (int j = 0; j < 7; j++) {
-                digitalWrite(Segment_7[segment][j], LOW);
-            }
+            digitalWrite(Segment_7[segment][j], Segment_Buffer[currentSegment][segment][j]);
         }
-        for (int i = 0; i < 2; i++)
-        {
-            digitalWrite(LED_Dots[i], LOW);
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            digitalWrite(LED_Section[i], LOW);
-        }
-        
-        digitalWrite(LED_Dots[1], HIGH);
-        digitalWrite(LED_Section[2], HIGH);
-        digitalWrite(LED_Section[3], HIGH);
-
-        ISystem.POWER_STATE = POWER_IDLE;
     }
-    else if(ISystem.POWER_STATE == POWER_ON)
+    for (int i = 0; i < 2; i++)
     {
-        digitalWrite(LED_Section[currentSegment], LOW);
-        currentSegment = (currentSegment + 1) % 4;
-        for (int segment = 0; segment < 4; segment++)
-        {
-            for (int j = 0; j < 7; j++)
-            {
-                digitalWrite(Segment_7[segment][j], Segment_Buffer[currentSegment][segment][j]);
-            }
-        }
-        for (int i = 0; i < 2; i++)
-        {
-            digitalWrite(LED_Dots[i], Dots_Buffer[i][currentSegment]);
-        }
-        digitalWrite(LED_Section[currentSegment], HIGH);
+        digitalWrite(LED_Dots[i], Dots_Buffer[i][currentSegment]);
     }
+    digitalWrite(LED_Section[currentSegment], HIGH);
 }

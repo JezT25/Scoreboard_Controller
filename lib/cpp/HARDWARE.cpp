@@ -73,13 +73,37 @@ void HARDWARE_class::LED_Initialize() {
 }
 
 void HARDWARE_class::CheckForPower() {
-    if (digitalRead(POWER_SW) == HIGH && ISystem.POWER_STATE != POWER_IDLE)
+    if (digitalRead(POWER_SW) == HIGH && ISystem.POWER_STATE != POWER_OFF)
     {
         ISystem.POWER_STATE = POWER_OFF;
+
+        for (int segment = 0; segment < 4; segment++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                digitalWrite(Segment_7[segment][j], LOW);
+            }
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            digitalWrite(LED_Dots[i], LOW);
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            digitalWrite(LED_Section[i], LOW);
+        }
+        
+        // digitalWrite(LED_Dots[1], HIGH);
+        // digitalWrite(LED_Section[2], HIGH);
+        // digitalWrite(LED_Section[3], HIGH);
+
+        attachInterrupt(digitalPinToInterrupt(POWER_SW), [](){}, LOW);
+        LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
     else if (digitalRead(POWER_SW) == LOW && ISystem.POWER_STATE != POWER_ON)
     {
         ISystem.POWER_STATE = POWER_ON;
+        detachInterrupt(digitalPinToInterrupt(POWER_SW));
     }
 }
 
