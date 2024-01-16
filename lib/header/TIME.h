@@ -21,7 +21,8 @@ class TIME_class : private HARDWARE_class {
         void ShotclockFunction();
 
     public:
-        void Function();    
+        void Function();  
+        void TimeUpdate();  
 };
 
 #endif

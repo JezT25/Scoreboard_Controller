@@ -38,9 +38,9 @@ void TIME_class::MainDisplayFunction() {
         original_SEC = IData.TIME_SECOND;
         IData.TIME_MS = 0;
     }
-    else if(ISystem.TIME_MODE == TIME_RUNNING)
+    else if(ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN)
     {
-        if(ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN)
+        if(ISystem.TIME_MODE == TIME_RUNNING)
         {   
             if (IData.TIME_MS == 0)
             {
@@ -74,9 +74,22 @@ void TIME_class::MainDisplayFunction() {
                 }
                 IData.TIME_MS = 9;
             }
-            else
+        }
+    }
+    else if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+    { 
+        if(ISystem.TIME_MODE == TIME_PAUSE)
+        {  
+            if (IData.TIME_MS == 600)
             {
-                IData.TIME_MS--;
+                IData.TIME_MS = 0;
+                IData.TIME_SECOND++;
+                if (IData.TIME_SECOND == 60)
+                {
+                    IData.TIME_SECOND = 0;
+                    IData.TIME_MINUTE++;
+                    if (IData.TIME_MINUTE == 24) IData.TIME_MINUTE = 0;
+                }
             }
         }
     }
@@ -111,10 +124,6 @@ void TIME_class::ShotclockFunction() {
             }
             IData.TIME_SC_MS = 9;
         }
-        else
-        {
-            IData.TIME_SC_MS--;
-        }
     }
 }
 
@@ -122,4 +131,10 @@ void TIME_class::Function() {
     EndHander();
     MainDisplayFunction();
     ShotclockFunction();
+}
+
+void TIME_class::TimeUpdate() {
+    if(ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN && ISystem.TIME_MODE == TIME_RUNNING) IData.TIME_MS--;
+    else if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && ISystem.TIME_MODE == TIME_PAUSE) IData.TIME_MS++;
+    if(ISystem.SC_TIME_MODE == TIME_RUNNING) IData.TIME_SC_MS--;
 }

@@ -18,6 +18,16 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
         }
         lastLongDebounceTime = millis();
     }
+    else if(buttonPins[i] == TIME_BUTTON && ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN && TimeOnOFFPressed)
+    {
+        if (millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
+        {
+            ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
+            ISystem.SC_TIME_MODE = TIME_PAUSE;
+            Beep(BEEP_SHORT, TONE_HIGH);
+        }
+        TimeOnOFFPressed = false;
+    }
     else if(buttonPins[i] == SC_PRESET && SCHeldWhileRunning)
     {
         ISystem.SC_TIME_MODE = TIME_RUNNING;
@@ -156,21 +166,20 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 break;
             case TIME_BUTTON:
                 if(ISystem.TIME_MODE == TIME_ADJUST) return;
-                // if(holdButton && ISystem.TIME_MODE == TIME_PAUSE)
-                // {
-                //     ISystem.TIME_DIRECTION = ISystem.TIME_DIRECTION == TIME_DIRECTION_UP ? TIME_DIRECTION_DOWN : TIME_DIRECTION_UP;
-                //     Beep(BEEP_MED, TONE_HIGH);
-                //     return;
-                // }
-                if(!holdButton)
+                if(!holdButton && !TimeOnOFFPressed) {
+                    TimeOnOFFPressed = true;
+                    lastTimeButtonTime = millis();
+                }
+                else if(holdButton && ISystem.TIME_MODE == TIME_PAUSE && TimeOnOFFPressed)
                 {
-                    ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
-                    ISystem.SC_TIME_MODE = TIME_PAUSE;
-                    Beep(BEEP_SHORT, TONE_HIGH);
+                    ISystem.TIME_DIRECTION = ISystem.TIME_DIRECTION == TIME_DIRECTION_UP ? TIME_DIRECTION_DOWN : TIME_DIRECTION_UP;
+                    IData.TIME_MS = 0;
+                    Beep(BEEP_MED, TONE_HIGH);
+                    TimeOnOFFPressed = false;
                 }
                 break;
             case SC_PRESET:
-                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_DIRECTION == TIME_DIRECTION_UP) return;
                 if(!holdButton)
                 {   
                     if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
@@ -196,7 +205,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
-                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_DIRECTION == TIME_DIRECTION_UP) return;
                 if(holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
                     ISystem.SC_TIME_MODE = TIME_RESET;

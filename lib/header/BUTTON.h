@@ -18,8 +18,10 @@
 
 class BUTTON_class : private HARDWARE_class {
     private:
-        bool SCHeldWhileRunning;
+        bool SCHeldWhileRunning = false;
+        bool TimeOnOFFPressed   = false;
         unsigned int debounceOffset;
+        unsigned long lastTimeButtonTime;
         unsigned long lastLongDebounceTime;
         unsigned long lastHoldDelayTime[BUTTON_DEBOUNCE_COUNT]  = { 0 };
         unsigned long lastDebounceTime[BUTTON_DEBOUNCE_COUNT]   = { 0 };

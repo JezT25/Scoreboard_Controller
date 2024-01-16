@@ -8,10 +8,12 @@
 #define LED_h
 
 #define BLINK_INTERVAL 300
+#define BLINK_HALFSEC  500
 
 class LED_class : private HARDWARE_class {
     private:
         bool coldBoot = true;
+        volatile unsigned int pTimeDirection;
         volatile unsigned int currentSegment;
         volatile unsigned int pScore_Home;
         volatile unsigned int pFoul_Home;

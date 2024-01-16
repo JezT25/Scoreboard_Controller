@@ -33,7 +33,47 @@ void LED_class::RefreshBuffer() {
     // From dead initialization never to be rerun again
     coldBoot ? ClearBuffer() : static_cast<void>(0);
 
-    if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
+    if(pTimeDirection != ISystem.TIME_DIRECTION)
+    {
+        pTimeDirection = ISystem.TIME_DIRECTION;
+        if(pTimeDirection == TIME_DIRECTION_UP)
+        {
+            pTime_Minute = 100;
+            pTime_Second = 100;
+            UpdateBuffer(10, SCORE_HOME_TENS);
+            UpdateBuffer(10, SCORE_HOME_ONES);
+            UpdateBuffer(10, SCORE_AWAY_ONES);
+            UpdateBuffer(10, SCORE_AWAY_TENS);
+            UpdateBuffer(10, FOUL_HOME);
+            UpdateBuffer(10, FOUL_AWAY);
+            UpdateBuffer(10, TIMEOUT_HOME);
+            UpdateBuffer(10, TIMEOUT_AWAY);
+            UpdateBuffer(10, SHOTCLOCK_TENS);
+            UpdateBuffer(10, SHOTCLOCK_ONES);
+            IData.GAME_PERIOD = FIRST_PERIOD;
+            IData.GAME_POSESSION = NO_POSESSION;
+            IData.GAME_DOTS = GAME_MINUTE;
+        }
+        else
+        {
+            pTime_Minute    = 100;
+            pTime_Second    = 100;
+            pScore_Home     = 100;
+            pScore_Away     = 100;
+            pFoul_Home      = 10;
+            pFoul_Away      = 10;
+            pTimeout_Home   = 10;
+            pTimeout_Away   = 10;
+            pShotclock      = 0;
+        }
+    }
+
+    if(ISystem.TIME_MODE == TIME_PAUSE && ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && millis() - lastBlinkTime >= BLINK_HALFSEC)
+    {
+        IData.GAME_DOTS = pDots == GAME_MINUTE ? GAME_HIDE : GAME_MINUTE;
+        lastBlinkTime = millis();
+    }
+    else if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
     {
         if(BlinkState)
         {
@@ -150,6 +190,8 @@ void LED_class::RefreshBuffer() {
 }
 
 void LED_class::DisplayDigits() {
+    if(ISystem.POWER_STATE != POWER_ON) return;
+
     digitalWrite(LED_Section[currentSegment], LOW);
     currentSegment = (currentSegment + 1) % 4;
     for (int segment = 0; segment < 4; segment++)

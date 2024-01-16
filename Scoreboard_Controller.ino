@@ -13,7 +13,7 @@ void setup()
 
 ISR(TIMER4_COMPA_vect)
 {
-	TIME.Function();
+	TIME.TimeUpdate();
 }
 
 ISR(TIMER5_COMPA_vect)
@@ -24,6 +24,7 @@ ISR(TIMER5_COMPA_vect)
 void loop()
 {
 	HARDWARE.Listener();
+	TIME.Function();
 	LED.RefreshBuffer();
 	BUTTON.Function();
 }
