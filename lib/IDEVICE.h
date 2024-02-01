@@ -41,18 +41,18 @@ class IDATA {
 
         volatile unsigned int FOUL_HOME         =    0;
 
-        volatile unsigned int TIMEOUT_HOME      =    7;
+        volatile unsigned int TIMEOUT_HOME      =    4;
 
         volatile unsigned int SCORE_AWAY        =    0;
 
         volatile unsigned int FOUL_AWAY         =    0;
 
-        volatile unsigned int TIMEOUT_AWAY      =    7;
+        volatile unsigned int TIMEOUT_AWAY      =    4;
 
         volatile unsigned int SHOTCLOCK         =    24;
 
         // volatile unsigned int TIME_MINUTE       =    10;
-        volatile unsigned int TIME_MINUTE       =    0;
+        volatile unsigned int TIME_MINUTE       =    1;
 
         // volatile unsigned int TIME_SECOND       =    0;
         volatile unsigned int TIME_SECOND       =    20;

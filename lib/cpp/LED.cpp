@@ -66,6 +66,7 @@ void LED_class::RefreshBuffer() {
             pTimeout_Away   = 10;
             pShotclock      = 0;
         }
+        BlinkState = false;
     }
 
     if(ISystem.TIME_MODE == TIME_PAUSE && ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && millis() - lastBlinkTime >= BLINK_HALFSEC)
@@ -85,7 +86,7 @@ void LED_class::RefreshBuffer() {
         }
         else
         {
-            UpdateBuffer(IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+            UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
             UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
             UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
             UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
@@ -97,7 +98,7 @@ void LED_class::RefreshBuffer() {
     }
     else if(!BlinkState && ISystem.TIME_MODE != TIME_ADJUST)
     {
-        UpdateBuffer(IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+        UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
         UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
         UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
         UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
@@ -124,7 +125,7 @@ void LED_class::RefreshBuffer() {
     {   
         if(IData.TIME_MINUTE != pTime_Minute)
         {
-            UpdateBuffer(IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+            UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
             UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
             pTime_Minute = IData.TIME_MINUTE;
         }

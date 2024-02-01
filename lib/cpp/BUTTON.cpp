@@ -139,7 +139,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 Beep(BEEP_SHORT, TONE_HIGH);
                 break;
             case HOME_TIMEOUT:
-                IData.TIMEOUT_HOME == 0 ? IData.TIMEOUT_HOME = 7 : IData.TIMEOUT_HOME--;
+                IData.TIMEOUT_HOME == 0 ? IData.TIMEOUT_HOME = 4 : IData.TIMEOUT_HOME--;
                 Beep(BEEP_SHORT, TONE_LOW);
                 break;
             case AWAY_FOUL:
@@ -147,7 +147,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 Beep(BEEP_SHORT, TONE_HIGH);
                 break;
             case AWAY_TIMEOUT:
-                IData.TIMEOUT_AWAY == 0 ? IData.TIMEOUT_AWAY = 7 : IData.TIMEOUT_AWAY--;
+                IData.TIMEOUT_AWAY == 0 ? IData.TIMEOUT_AWAY = 4 : IData.TIMEOUT_AWAY--;
                 Beep(BEEP_SHORT, TONE_LOW);
                 break;
             case TIME_MIN:
