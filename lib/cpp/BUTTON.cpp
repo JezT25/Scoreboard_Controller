@@ -12,7 +12,7 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
     {
         if (isTimeSecPressed && isTimeMinPressed && ((millis() - lastLongDebounceTime) >= (DEBOUNCE_SHORT + debounceOffset)))
         {
-            IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? FIRST_PERIOD : (IData.GAME_PERIOD >> 1);
+            IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? NO_PERIOD : (IData.GAME_PERIOD >> 1);
             Beep(BEEP_SHORT, TONE_HIGH);
             debounceOffset = DEBOUNCE_NONE;
         }

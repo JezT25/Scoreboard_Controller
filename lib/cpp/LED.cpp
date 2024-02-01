@@ -50,7 +50,7 @@ void LED_class::RefreshBuffer() {
             UpdateBuffer(10, TIMEOUT_AWAY);
             UpdateBuffer(10, SHOTCLOCK_TENS);
             UpdateBuffer(10, SHOTCLOCK_ONES);
-            IData.GAME_PERIOD = FIRST_PERIOD;
+            IData.GAME_PERIOD = NO_PERIOD;
             IData.GAME_POSESSION = NO_POSESSION;
             IData.GAME_DOTS = GAME_MINUTE;
         }

@@ -16,7 +16,7 @@ void TIME_class::EndHander() {
         IData.TIME_MINUTE = original_MIN;
         IData.TIME_SECOND = original_SEC;
         IData.TIME_MS = 0;
-        IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? FIRST_PERIOD : (IData.GAME_PERIOD >> 1);
+        IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? NO_PERIOD : (IData.GAME_PERIOD >> 1);
         IData.GAME_POSESSION = NO_POSESSION;
         IData.GAME_DOTS = GAME_MINUTE;
         endPeriod = false;

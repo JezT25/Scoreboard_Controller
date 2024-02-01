@@ -7,6 +7,7 @@
 #ifndef IDEVICE_h
 #define IDEVICE_h
 
+#define NO_PERIOD           16
 #define FIRST_PERIOD        8
 #define SECOND_PERIOD       4
 #define THIRD_PERIOD        2
