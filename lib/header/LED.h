@@ -24,6 +24,8 @@ class LED_class : private HARDWARE_class {
         volatile unsigned int pShotclock;
         volatile unsigned int pTime_Minute;
         volatile unsigned int pTime_Second;
+        volatile unsigned int pClock_Hour;
+        volatile unsigned int pClock_Minute;
         volatile unsigned int pPeriod;
         volatile unsigned int pPosession;
         volatile unsigned int pDots;

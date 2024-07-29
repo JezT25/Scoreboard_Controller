@@ -52,15 +52,19 @@ class IDATA {
 
         volatile unsigned int SHOTCLOCK         =    24;
 
-        // volatile unsigned int TIME_MINUTE       =    10;
-        volatile unsigned int TIME_MINUTE       =    1;
+        volatile unsigned int TIME_MINUTE       =    10;
 
-        // volatile unsigned int TIME_SECOND       =    0;
-        volatile unsigned int TIME_SECOND       =    20;
+        volatile unsigned int TIME_SECOND       =    0;
 
         volatile unsigned int TIME_MS           =    0;
 
         volatile unsigned int TIME_SC_MS        =    0;
+        
+        volatile unsigned int CLOCK_HOUR        =    0;
+        
+        volatile unsigned int CLOCK_MINUTE      =    0;
+
+        volatile unsigned int CLOCK_MS          =    0;
 
         volatile unsigned int GAME_PERIOD       =    FIRST_PERIOD;
 

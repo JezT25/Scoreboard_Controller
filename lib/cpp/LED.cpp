@@ -69,12 +69,13 @@ void LED_class::RefreshBuffer() {
         BlinkState = false;
     }
 
-    if(ISystem.TIME_MODE == TIME_PAUSE && ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && millis() - lastBlinkTime >= BLINK_HALFSEC)
-    {
-        IData.GAME_DOTS = pDots == GAME_MINUTE ? GAME_HIDE : GAME_MINUTE;
-        lastBlinkTime = millis();
-    }
-    else if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
+    // if(ISystem.TIME_MODE == TIME_RUNNING && ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && millis() - lastBlinkTime >= BLINK_HALFSEC)
+    // {
+    //     IData.GAME_DOTS = pDots == GAME_MINUTE ? GAME_HIDE : GAME_MINUTE;
+    //     lastBlinkTime = millis();
+    // }
+    // else if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
+    if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
     {
         if(BlinkState)
         {
@@ -86,10 +87,21 @@ void LED_class::RefreshBuffer() {
         }
         else
         {
-            UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
-            UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
-            UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
-            UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+            if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+            {
+                UpdateBuffer(IData.CLOCK_HOUR / 10 == 0 ? 10 : IData.CLOCK_HOUR / 10, TIME_MIN_TENS);
+                UpdateBuffer(IData.CLOCK_HOUR % 10, TIME_MIN_ONES);
+                UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
+                UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
+            }
+            else
+            {
+                UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+                UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
+                UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
+                UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+            }
+
             IData.GAME_DOTS = GAME_MINUTE;
         }
         UpdateMiniBuffer();
@@ -98,10 +110,20 @@ void LED_class::RefreshBuffer() {
     }
     else if(!BlinkState && ISystem.TIME_MODE != TIME_ADJUST)
     {
-        UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
-        UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
-        UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
-        UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+        if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+        {
+            UpdateBuffer(IData.CLOCK_HOUR / 10 == 0 ? 10 : IData.CLOCK_HOUR / 10, TIME_MIN_TENS);
+            UpdateBuffer(IData.CLOCK_HOUR % 10, TIME_MIN_ONES);
+            UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
+            UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
+        }
+        else
+        {
+            UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+            UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
+            UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
+            UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+        }
         BlinkState = !BlinkState;
         IData.GAME_DOTS = GAME_MINUTE;
         UpdateMiniBuffer();
@@ -123,17 +145,35 @@ void LED_class::RefreshBuffer() {
     }
     else
     {   
-        if(IData.TIME_MINUTE != pTime_Minute)
+        if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
         {
-            UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
-            UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
-            pTime_Minute = IData.TIME_MINUTE;
+            if(IData.CLOCK_HOUR != pClock_Hour)
+            {
+                UpdateBuffer(IData.CLOCK_HOUR / 10 == 0 ? 10 : IData.CLOCK_HOUR / 10, TIME_MIN_TENS);
+                UpdateBuffer(IData.CLOCK_HOUR % 10, TIME_MIN_ONES);
+                pClock_Hour = IData.CLOCK_HOUR;
+            }
+            if(IData.CLOCK_MINUTE != pClock_Minute)
+            {
+                UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
+                UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
+                pClock_Minute = IData.CLOCK_MINUTE;
+            }
         }
-        if(IData.TIME_SECOND != pTime_Second)
+        else
         {
-            UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
-            UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
-            pTime_Second = IData.TIME_SECOND;
+            if(IData.TIME_MINUTE != pTime_Minute)
+            {
+                UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
+                UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
+                pTime_Minute = IData.TIME_MINUTE;
+            }
+            if(IData.TIME_SECOND != pTime_Second)
+            {
+                UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
+                UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+                pTime_Second = IData.TIME_SECOND;
+            }
         }
     }
     if(IData.SCORE_HOME != pScore_Home)

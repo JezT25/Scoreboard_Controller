@@ -18,7 +18,7 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
         }
         lastLongDebounceTime = millis();
     }
-    else if(buttonPins[i] == TIME_BUTTON && ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN && TimeOnOFFPressed)
+    else if(buttonPins[i] == TIME_BUTTON && TimeOnOFFPressed)
     {
         if (millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
         {
