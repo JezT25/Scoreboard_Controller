@@ -13,7 +13,7 @@
 class LED_class : private HARDWARE_class {
     private:
         bool coldBoot = true;
-        volatile unsigned int pTimeDirection;
+        volatile unsigned int pTimeClock;
         volatile unsigned int currentSegment;
         volatile unsigned int pScore_Home;
         volatile unsigned int pFoul_Home;

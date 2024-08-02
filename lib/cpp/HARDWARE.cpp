@@ -46,6 +46,9 @@ void HARDWARE_class::TIME_Initialize() {
     TCCR4B |= (1 << WGM42);
     TCCR4B |= (1 << CS42) | (0 << CS41) | (0 << CS40);
     TIMSK4 |= (1 << OCIE4A);
+
+    // Initialize RTC
+	rtc.begin();
 }
 
 void HARDWARE_class::LED_Initialize() {

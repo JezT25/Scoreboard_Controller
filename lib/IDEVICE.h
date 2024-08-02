@@ -30,8 +30,8 @@
 #define TIME_RUNNING        2
 #define TIME_ADJUST         3
 #define TIME_RESET          4
-#define TIME_DIRECTION_UP   1
-#define TIME_DIRECTION_DOWN 2
+#define TIME_CLOCK          5
+#define TIME_CLOCKADJUST    6
 
 #define POWER_OFF           0
 #define POWER_ON            1
@@ -64,8 +64,6 @@ class IDATA {
         
         volatile unsigned int CLOCK_MINUTE      =    0;
 
-        volatile unsigned int CLOCK_MS          =    0;
-
         volatile unsigned int GAME_PERIOD       =    FIRST_PERIOD;
 
         volatile unsigned int GAME_POSESSION    =    NO_POSESSION;
@@ -78,8 +76,6 @@ class ISYSTEM {
         volatile unsigned int TIME_MODE         =    TIME_PAUSE;
 
         volatile unsigned int SC_TIME_MODE      =    TIME_RESET;
-
-        volatile unsigned int TIME_DIRECTION    =    TIME_DIRECTION_DOWN;
 
         volatile unsigned int POWER_STATE       =    POWER_ON;
 };

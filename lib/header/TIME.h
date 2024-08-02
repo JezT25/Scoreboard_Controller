@@ -16,11 +16,13 @@ class TIME_class : private HARDWARE_class {
         volatile bool endPeriod = false;
         volatile bool endSC = false;
 
+        void GetRTC();
         void EndHander();
         void MainDisplayFunction();
         void ShotclockFunction();
 
     public:
+        void SetRTC();
         void Function();  
         void TimeUpdate();  
 };

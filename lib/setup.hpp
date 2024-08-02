@@ -10,6 +10,8 @@
 /** LIBRARIES **/
 #include <Arduino.h>
 #include "LowPower.h"
+#include <DS3231.h>
+DS3231 rtc(SDA, SCL);
 
 #include "IDEVICE.h"
 IDATA IData;
@@ -24,12 +26,12 @@ HARDWARE_class HARDWARE;
 #include "cpp/LED.cpp"
 LED_class LED;
 
-#include "header/BUTTON.h"
-#include "cpp/BUTTON.cpp"
-BUTTON_class BUTTON;
-
 #include "header/TIME.h"
 #include "cpp/TIME.cpp"
 TIME_class TIME;
+
+#include "header/BUTTON.h"
+#include "cpp/BUTTON.cpp"
+BUTTON_class BUTTON;
 
 #endif

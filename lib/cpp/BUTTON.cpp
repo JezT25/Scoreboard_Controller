@@ -5,6 +5,8 @@
 *******************************************/
 
 void BUTTON_class::ButtonReleaseFunctions(int i) {
+    if(ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
+    
     const bool isTimeMinPressed  = digitalRead(TIME_MIN);
     const bool isTimeSecPressed  = digitalRead(TIME_SEC);
 
@@ -53,6 +55,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
             {
                 IData.TIME_MINUTE = 0;
             }
+            else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+            {
+                IData.CLOCK_HOUR = 0;
+            }
             else
             {
                 IData.SCORE_HOME = 0;
@@ -68,6 +74,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
             {
                 IData.TIME_SECOND = 0;
             }
+            else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+            {
+                IData.CLOCK_MINUTE = 0;
+            }
             else
             {
                 IData.SCORE_AWAY = 0;
@@ -80,7 +90,19 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
         if(holdButton && (millis() - lastLongDebounceTime) >= DEBOUNCE_LONG)
         {
             if(ISystem.TIME_MODE == TIME_RUNNING) return;
-            ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_PAUSE ? TIME_ADJUST : TIME_PAUSE;
+            if(ISystem.TIME_MODE == TIME_PAUSE || ISystem.TIME_MODE == TIME_ADJUST)
+            {
+                ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_PAUSE ? TIME_ADJUST : TIME_PAUSE;
+            }
+            else if(ISystem.TIME_MODE == TIME_CLOCK)
+            {
+                ISystem.TIME_MODE = TIME_CLOCKADJUST;
+            }
+            else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+            {
+                TIME.SetRTC();
+                ISystem.TIME_MODE = TIME_CLOCK;
+            }
             Beep(BEEP_LONG, TONE_HIGH);
             debounceOffset = DEBOUNCE_MED;
         }
@@ -88,12 +110,18 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
     }
     else
     {
+        if(ISystem.TIME_MODE == TIME_CLOCK && buttonPins[i] != TIME_BUTTON) return;
+        if(ISystem.TIME_MODE == TIME_CLOCKADJUST && buttonPins[i] != HOME_UP && buttonPins[i] != HOME_DOWN && buttonPins[i] != AWAY_UP && buttonPins[i] != AWAY_DOWN) return;
         switch (buttonPins[i])
         {
             case HOME_UP:
                 if(ISystem.TIME_MODE == TIME_ADJUST)
                 {
                     IData.TIME_MINUTE == 23 ? IData.TIME_MINUTE = 0 : IData.TIME_MINUTE++;
+                }
+                else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+                {
+                    IData.CLOCK_HOUR == 12 ? IData.CLOCK_HOUR = 1 : IData.CLOCK_HOUR++;
                 }
                 else
                 {
@@ -106,6 +134,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 {
                     IData.TIME_MINUTE == 0 ? IData.TIME_MINUTE = 23 : IData.TIME_MINUTE--;
                 }
+                else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+                {
+                    IData.CLOCK_HOUR == 1 ? IData.CLOCK_HOUR = 12 : IData.CLOCK_HOUR--;
+                }
                 else
                 {
                     IData.SCORE_HOME == 0 ? IData.SCORE_HOME = 99 : IData.SCORE_HOME--;
@@ -117,6 +149,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 {
                     IData.TIME_SECOND == 59 ? IData.TIME_SECOND = 0 : IData.TIME_SECOND++;
                 }
+                else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+                {
+                    IData.CLOCK_MINUTE == 59 ? IData.CLOCK_MINUTE = 0 : IData.CLOCK_MINUTE++;
+                }
                 else
                 {
                     IData.SCORE_AWAY == 99 ? IData.SCORE_AWAY = 0 : IData.SCORE_AWAY++;
@@ -127,6 +163,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 if(ISystem.TIME_MODE == TIME_ADJUST)
                 {
                     IData.TIME_SECOND == 0 ? IData.TIME_SECOND = 59 : IData.TIME_SECOND--;
+                }
+                else if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
+                {
+                    IData.CLOCK_MINUTE == 0 ? IData.CLOCK_MINUTE = 59 : IData.CLOCK_MINUTE--;
                 }
                 else
                 {
@@ -165,21 +205,20 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 break;
             case TIME_BUTTON:
-                if(ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
                 if(!holdButton && !TimeOnOFFPressed) {
                     TimeOnOFFPressed = true;
                     lastTimeButtonTime = millis();
                 }
-                else if(holdButton && ISystem.TIME_MODE == TIME_PAUSE && TimeOnOFFPressed)
+                else if(holdButton && (ISystem.TIME_MODE == TIME_PAUSE || ISystem.TIME_MODE == TIME_CLOCK) && TimeOnOFFPressed)
                 {
-                    ISystem.TIME_DIRECTION = ISystem.TIME_DIRECTION == TIME_DIRECTION_UP ? TIME_DIRECTION_DOWN : TIME_DIRECTION_UP;
-                    IData.TIME_MS = 0;
+                    ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_PAUSE ? TIME_CLOCK : TIME_PAUSE;
                     Beep(BEEP_MED, TONE_HIGH);
                     TimeOnOFFPressed = false;
                 }
                 break;
             case SC_PRESET:
-                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_DIRECTION == TIME_DIRECTION_UP) return;
+                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST) return;
                 if(!holdButton)
                 {   
                     if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
@@ -205,7 +244,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
-                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_DIRECTION == TIME_DIRECTION_UP) return;
+                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST) return;
                 if(holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
                     ISystem.SC_TIME_MODE = TIME_RESET;

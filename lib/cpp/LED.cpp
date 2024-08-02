@@ -33,10 +33,11 @@ void LED_class::RefreshBuffer() {
     // From dead initialization never to be rerun again
     coldBoot ? ClearBuffer() : static_cast<void>(0);
 
-    if(pTimeDirection != ISystem.TIME_DIRECTION)
+    // Clear screen settings when switching from time to clock
+    if((ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_PAUSE) && pTimeClock != ISystem.TIME_MODE)
     {
-        pTimeDirection = ISystem.TIME_DIRECTION;
-        if(pTimeDirection == TIME_DIRECTION_UP)
+        pTimeClock = ISystem.TIME_MODE;
+        if(pTimeClock == TIME_CLOCK)
         {
             pTime_Minute = 100;
             pTime_Second = 100;
@@ -54,7 +55,7 @@ void LED_class::RefreshBuffer() {
             IData.GAME_POSESSION = NO_POSESSION;
             IData.GAME_DOTS = GAME_MINUTE;
         }
-        else
+        else if(pTimeClock == TIME_PAUSE)
         {
             pTime_Minute    = 100;
             pTime_Second    = 100;
@@ -69,13 +70,8 @@ void LED_class::RefreshBuffer() {
         BlinkState = false;
     }
 
-    // if(ISystem.TIME_MODE == TIME_RUNNING && ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && millis() - lastBlinkTime >= BLINK_HALFSEC)
-    // {
-    //     IData.GAME_DOTS = pDots == GAME_MINUTE ? GAME_HIDE : GAME_MINUTE;
-    //     lastBlinkTime = millis();
-    // }
-    // else if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
-    if(ISystem.TIME_MODE == TIME_ADJUST && millis() - lastBlinkTime >= BLINK_INTERVAL)
+    // Blinking routing when adjusting time
+    if((ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST) && millis() - lastBlinkTime >= BLINK_INTERVAL)
     {
         if(BlinkState)
         {
@@ -87,14 +83,14 @@ void LED_class::RefreshBuffer() {
         }
         else
         {
-            if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+            if(ISystem.TIME_MODE == TIME_CLOCKADJUST)
             {
                 UpdateBuffer(IData.CLOCK_HOUR / 10 == 0 ? 10 : IData.CLOCK_HOUR / 10, TIME_MIN_TENS);
                 UpdateBuffer(IData.CLOCK_HOUR % 10, TIME_MIN_ONES);
                 UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
                 UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
             }
-            else
+            else if(ISystem.TIME_MODE == TIME_ADJUST)
             {
                 UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
                 UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
@@ -108,16 +104,17 @@ void LED_class::RefreshBuffer() {
         BlinkState = !BlinkState;
         lastBlinkTime = millis();
     }
-    else if(!BlinkState && ISystem.TIME_MODE != TIME_ADJUST)
+    // This is so that if we go back to not adjusting and last state was turn off. It will turn the display on
+    else if(!BlinkState && ISystem.TIME_MODE != TIME_ADJUST && ISystem.TIME_MODE != TIME_CLOCKADJUST)
     {
-        if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+        if(ISystem.TIME_MODE == TIME_CLOCK)
         {
             UpdateBuffer(IData.CLOCK_HOUR / 10 == 0 ? 10 : IData.CLOCK_HOUR / 10, TIME_MIN_TENS);
             UpdateBuffer(IData.CLOCK_HOUR % 10, TIME_MIN_ONES);
             UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
             UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
         }
-        else
+        else if(ISystem.TIME_MODE == TIME_ADJUST)
         {
             UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
             UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
@@ -129,7 +126,7 @@ void LED_class::RefreshBuffer() {
         UpdateMiniBuffer();
     }
 
-    if(ISystem.TIME_MODE != TIME_ADJUST && ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN && IData.TIME_MINUTE == 0)
+    if(ISystem.TIME_MODE != TIME_ADJUST && ISystem.TIME_MODE != TIME_CLOCK && ISystem.TIME_MODE != TIME_CLOCKADJUST && IData.TIME_MINUTE == 0)
     {
         UpdateBuffer(IData.TIME_SECOND / 10 == 0 ? 10 : IData.TIME_SECOND / 10, TIME_MIN_TENS);
         UpdateBuffer(IData.TIME_SECOND % 10, TIME_MIN_ONES);
@@ -145,7 +142,7 @@ void LED_class::RefreshBuffer() {
     }
     else
     {   
-        if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
+        if(ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST)
         {
             if(IData.CLOCK_HOUR != pClock_Hour)
             {

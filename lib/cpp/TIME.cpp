@@ -4,6 +4,16 @@
 	(0917) 443 2532
 *******************************************/
 
+void TIME_class::GetRTC() {
+    if(ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
+    IData.CLOCK_HOUR = (rtc.getTime().hour % 12 == 0) ? 12 : rtc.getTime().hour % 12;
+    IData.CLOCK_MINUTE = rtc.getTime().min;
+}
+
+void TIME_class::SetRTC() {
+    rtc.setTime(IData.CLOCK_HOUR, IData.CLOCK_MINUTE, 0);
+}
+
 void TIME_class::EndHander() {
     if(endSC && millis() - prev_SCEnd >= BEEP_EX_LONG)
     {
@@ -32,69 +42,45 @@ void TIME_class::MainDisplayFunction() {
         ISystem.SC_TIME_MODE = TIME_RESET;
     }
 
-    if(ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN)
+    if(ISystem.TIME_MODE == TIME_ADJUST)
     {
-        if(ISystem.TIME_MODE == TIME_ADJUST)
+        original_MIN = IData.TIME_MINUTE;
+        original_SEC = IData.TIME_SECOND;
+        IData.TIME_MS = 0;
+    }
+    else if(ISystem.TIME_MODE == TIME_RUNNING)
+    {   
+        if (IData.TIME_MS == 0)
         {
-            original_MIN = IData.TIME_MINUTE;
-            original_SEC = IData.TIME_SECOND;
-            IData.TIME_MS = 0;
-        }
-        else if(ISystem.TIME_MODE == TIME_RUNNING)
-        {   
-            if (IData.TIME_MS == 0)
+            if (IData.TIME_SECOND > 0)
             {
-                if (IData.TIME_SECOND > 0)
+                if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND <= 10)
                 {
-                    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND <= 10)
-                    {
-                        Beep(BEEP_SHORT, TONE_LOW);
-                    }
-                    IData.TIME_SECOND--;
+                    Beep(BEEP_SHORT, TONE_LOW);
+                }
+                IData.TIME_SECOND--;
+            }
+            else
+            {
+                if (IData.TIME_MINUTE > 0)
+                {
+                    IData.TIME_MINUTE--;
+                    IData.TIME_SECOND = 59;
                 }
                 else
                 {
-                    if (IData.TIME_MINUTE > 0)
-                    {
-                        IData.TIME_MINUTE--;
-                        IData.TIME_SECOND = 59;
-                    }
-                    else
-                    {
-                        IData.SHOTCLOCK = 0;
-                        ISystem.TIME_MODE = TIME_PAUSE;
-                        ISystem.SC_TIME_MODE = TIME_RESET;
-                        Beep(BEEP_EXX_LONG, TONE_HIGH);
-                        Honk(BEEP_EXX_LONG);
-                        endPeriod = true;
-                        endSC = false;
-                        prev_periodEnd = millis();
-                        return;
-                    }
-                }
-                IData.TIME_MS = 9;
-            }
-        }
-    }
-    else if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP)
-    { 
-        if(ISystem.TIME_MODE == TIME_ADJUST)
-        {
-            IData.CLOCK_MS = 0;
-        }
-        else if(ISystem.TIME_MODE == TIME_RUNNING)
-        {  
-            if (IData.CLOCK_MS == 600)
-            {
-                IData.CLOCK_MS = 0;
-                IData.CLOCK_MINUTE++;
-                if (IData.CLOCK_MINUTE == 60)
-                {
-                    IData.CLOCK_MINUTE = 0;
-                    IData.CLOCK_HOUR++;
-                    if (IData.CLOCK_HOUR == 24) IData.CLOCK_MINUTE = 0;
+                    IData.SHOTCLOCK = 0;
+                    ISystem.TIME_MODE = TIME_PAUSE;
+                    ISystem.SC_TIME_MODE = TIME_RESET;
+                    Beep(BEEP_EXX_LONG, TONE_HIGH);
+                    Honk(BEEP_EXX_LONG);
+                    endPeriod = true;
+                    endSC = false;
+                    prev_periodEnd = millis();
+                    return;
                 }
             }
+            IData.TIME_MS = 9;
         }
     }
 }
@@ -132,13 +118,13 @@ void TIME_class::ShotclockFunction() {
 }
 
 void TIME_class::Function() {
+    GetRTC();
     EndHander();
     MainDisplayFunction();
     ShotclockFunction();
 }
 
 void TIME_class::TimeUpdate() {
-    if(ISystem.TIME_DIRECTION == TIME_DIRECTION_DOWN && ISystem.TIME_MODE == TIME_RUNNING) IData.TIME_MS--;
-    else if(ISystem.TIME_DIRECTION == TIME_DIRECTION_UP && ISystem.TIME_MODE == TIME_RUNNING) IData.CLOCK_MS++;
+    if(ISystem.TIME_MODE == TIME_RUNNING) IData.TIME_MS--;
     if(ISystem.SC_TIME_MODE == TIME_RUNNING) IData.TIME_SC_MS--;
 }
