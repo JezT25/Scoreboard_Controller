@@ -5,8 +5,6 @@
 *******************************************/
 
 void BUTTON_class::ButtonReleaseFunctions(int i) {
-    if(ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
-    
     const bool isTimeMinPressed  = digitalRead(TIME_MIN);
     const bool isTimeSecPressed  = digitalRead(TIME_SEC);
 
@@ -22,7 +20,7 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
     }
     else if(buttonPins[i] == TIME_BUTTON && TimeOnOFFPressed)
     {
-        if (millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
+        if(ISystem.TIME_MODE != TIME_CLOCK && millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
         {
             ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
             ISystem.SC_TIME_MODE = TIME_PAUSE;
@@ -110,8 +108,6 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
     }
     else
     {
-        if(ISystem.TIME_MODE == TIME_CLOCK && buttonPins[i] != TIME_BUTTON) return;
-        if(ISystem.TIME_MODE == TIME_CLOCKADJUST && buttonPins[i] != HOME_UP && buttonPins[i] != HOME_DOWN && buttonPins[i] != AWAY_UP && buttonPins[i] != AWAY_DOWN) return;
         switch (buttonPins[i])
         {
             case HOME_UP:
@@ -218,7 +214,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 break;
             case SC_PRESET:
-                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
                 if(!holdButton)
                 {   
                     if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
@@ -244,7 +240,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:
-                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST) return;
+                if(!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
                 if(holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)
                 {
                     ISystem.SC_TIME_MODE = TIME_RESET;

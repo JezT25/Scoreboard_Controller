@@ -4,11 +4,6 @@
 	(0917) 443 2532
 *******************************************/
 
-void TIME_class::GetRTC() {
-    if(ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
-    IData.CLOCK_HOUR = (rtc.getTime().hour % 12 == 0) ? 12 : rtc.getTime().hour % 12;
-    IData.CLOCK_MINUTE = rtc.getTime().min;
-}
 
 void TIME_class::SetRTC() {
     rtc.setTime(IData.CLOCK_HOUR, IData.CLOCK_MINUTE, 0);
@@ -21,8 +16,9 @@ void TIME_class::EndHander() {
         endSC = false;
     }
 
-    if(endPeriod && millis() - prev_periodEnd >= BEEP_EXX_LONG)
+    if(endPeriod && (millis() - prev_periodEnd >= BEEP_EXX_LONG || ISystem.TIME_MODE == TIME_RUNNING))
     {
+        ISystem.TIME_MODE = TIME_PAUSE;
         IData.TIME_MINUTE = original_MIN;
         IData.TIME_SECOND = original_SEC;
         IData.TIME_MS = 0;
@@ -118,7 +114,6 @@ void TIME_class::ShotclockFunction() {
 }
 
 void TIME_class::Function() {
-    GetRTC();
     EndHander();
     MainDisplayFunction();
     ShotclockFunction();
@@ -127,4 +122,9 @@ void TIME_class::Function() {
 void TIME_class::TimeUpdate() {
     if(ISystem.TIME_MODE == TIME_RUNNING) IData.TIME_MS--;
     if(ISystem.SC_TIME_MODE == TIME_RUNNING) IData.TIME_SC_MS--;
+    
+    // Get RTC
+    if(ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
+    IData.CLOCK_HOUR = (rtc.getTime().hour % 12 == 0) ? 12 : rtc.getTime().hour % 12;
+    IData.CLOCK_MINUTE = rtc.getTime().min;
 }

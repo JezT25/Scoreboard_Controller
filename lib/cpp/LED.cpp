@@ -41,19 +41,19 @@ void LED_class::RefreshBuffer() {
         {
             pTime_Minute = 100;
             pTime_Second = 100;
-            UpdateBuffer(10, SCORE_HOME_TENS);
-            UpdateBuffer(10, SCORE_HOME_ONES);
-            UpdateBuffer(10, SCORE_AWAY_ONES);
-            UpdateBuffer(10, SCORE_AWAY_TENS);
-            UpdateBuffer(10, FOUL_HOME);
-            UpdateBuffer(10, FOUL_AWAY);
-            UpdateBuffer(10, TIMEOUT_HOME);
-            UpdateBuffer(10, TIMEOUT_AWAY);
+            // UpdateBuffer(10, SCORE_HOME_TENS);
+            // UpdateBuffer(10, SCORE_HOME_ONES);
+            // UpdateBuffer(10, SCORE_AWAY_ONES);
+            // UpdateBuffer(10, SCORE_AWAY_TENS);
+            // UpdateBuffer(10, FOUL_HOME);
+            // UpdateBuffer(10, FOUL_AWAY);
+            // UpdateBuffer(10, TIMEOUT_HOME);
+            // UpdateBuffer(10, TIMEOUT_AWAY);
             UpdateBuffer(10, SHOTCLOCK_TENS);
             UpdateBuffer(10, SHOTCLOCK_ONES);
-            IData.GAME_PERIOD = NO_PERIOD;
-            IData.GAME_POSESSION = NO_POSESSION;
-            IData.GAME_DOTS = GAME_MINUTE;
+            // IData.GAME_PERIOD = NO_PERIOD;
+            // IData.GAME_POSESSION = NO_POSESSION;
+            // IData.GAME_DOTS = GAME_MINUTE;
         }
         else if(pTimeClock == TIME_PAUSE)
         {
@@ -70,8 +70,23 @@ void LED_class::RefreshBuffer() {
         BlinkState = false;
     }
 
+    // Blinking of column during time mode
+    if(ISystem.TIME_MODE == TIME_CLOCK && millis() - lastBlinkTime >= BLINK_HALFSEC)
+    {
+        if(BlinkState)
+        {
+            IData.GAME_DOTS = GAME_HIDE;
+        }
+        else
+        {
+            IData.GAME_DOTS = GAME_MINUTE;
+        }
+        UpdateMiniBuffer();
+        BlinkState = !BlinkState;
+        lastBlinkTime = millis();
+    }
     // Blinking routing when adjusting time
-    if((ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST) && millis() - lastBlinkTime >= BLINK_INTERVAL)
+    else if((ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST) && millis() - lastBlinkTime >= BLINK_INTERVAL)
     {
         if(BlinkState)
         {
@@ -114,15 +129,15 @@ void LED_class::RefreshBuffer() {
             UpdateBuffer(IData.CLOCK_MINUTE / 10, TIME_TENS);
             UpdateBuffer(IData.CLOCK_MINUTE % 10, TIME_ONES);
         }
-        else if(ISystem.TIME_MODE == TIME_ADJUST)
+        else
         {
             UpdateBuffer(IData.TIME_MINUTE / 10 == 0 ? 10 : IData.TIME_MINUTE / 10, TIME_MIN_TENS);
             UpdateBuffer(IData.TIME_MINUTE % 10, TIME_MIN_ONES);
             UpdateBuffer(IData.TIME_SECOND / 10, TIME_TENS);
             UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
+            BlinkState = !BlinkState;
+            IData.GAME_DOTS = GAME_MINUTE;
         }
-        BlinkState = !BlinkState;
-        IData.GAME_DOTS = GAME_MINUTE;
         UpdateMiniBuffer();
     }
 
@@ -136,8 +151,8 @@ void LED_class::RefreshBuffer() {
 
         if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0)
         {
-            pTime_Minute = IData.TIME_MINUTE;
-            pTime_Second = IData.TIME_SECOND;
+            pTime_Minute = 100;
+            pTime_Second = 100;
         }
     }
     else
