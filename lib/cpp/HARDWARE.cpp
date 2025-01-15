@@ -75,6 +75,11 @@ void HARDWARE_class::LED_Initialize() {
     TIMSK5 |= (1 << OCIE5A);
 }
 
+void HARDWARE_class::WIFI_Initialize() {
+    // Serial Communication with ESP8266 through Serial3
+    Serial3.begin(SERIAL3_BAUD);
+}
+
 void HARDWARE_class::CheckForPower() {
     if (digitalRead(POWER_SW) == HIGH && ISystem.POWER_STATE != POWER_OFF)
     {
@@ -116,6 +121,7 @@ void HARDWARE_class::Initialize() {
     BUTTON_Initialize();
     TIME_Initialize();
     LED_Initialize();
+    WIFI_Initialize();
     interrupts();
 }
 

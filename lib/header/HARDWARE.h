@@ -7,7 +7,7 @@
 #ifndef HARDWARE_h
 #define HARDWARE_h
 
-#define BUZZER          2
+#define BUZZER          13 // 2 is original | swithched now para di saba
 #define HORN            39
 
 #define FT_A            53
@@ -74,6 +74,8 @@
 #define TONE_LOW        800
 #define TONE_HIGH       1000
 
+#define SERIAL3_BAUD    115200
+
 class HARDWARE_class {
     protected:
         const int LED_Section[4] = { SECTION_1, SECTION_2, SECTION_3, SECTION_4 };
@@ -112,6 +114,7 @@ class HARDWARE_class {
         void BUTTON_Initialize();
         void TIME_Initialize();
         void LED_Initialize();
+        void WIFI_Initialize();
         void CheckForPower();
 
     public:

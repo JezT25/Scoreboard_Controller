@@ -34,4 +34,8 @@ TIME_class TIME;
 #include "cpp/BUTTON.cpp"
 BUTTON_class BUTTON;
 
+#include "header/WIFI.h"
+#include "cpp/WIFI.cpp"
+WIFI_class WIFI;
+
 #endif

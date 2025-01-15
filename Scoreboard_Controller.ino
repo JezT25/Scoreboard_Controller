@@ -27,4 +27,5 @@ void loop()
 	TIME.Function();
 	LED.RefreshBuffer();
 	BUTTON.Function();
+	WIFI.SendUpdate();
 }

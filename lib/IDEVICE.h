@@ -69,6 +69,8 @@ class IDATA {
         volatile unsigned int GAME_POSESSION    =    NO_POSESSION;
 
         volatile unsigned int GAME_DOTS         =    GAME_MINUTE;
+
+        String toJSON();
 };
 
 class ISYSTEM {
