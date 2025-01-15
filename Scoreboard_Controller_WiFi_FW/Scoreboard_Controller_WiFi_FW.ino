@@ -1,15 +1,15 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-#define SSID      "MyNodeMCU_AP"
-#define PASSWORD  "password123"
+#define WIFI_SSID      "MyNodeMCU_AP"
+#define WIFI_PASSWORD  "password123"
 
 ESP8266WebServer server(80);
 String data;
 
 void setup() {
   Serial.begin(115200);
-  WiFi.softAP(SSID, PASSWORD, 1, false);
+  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD, 1, false);
   IPAddress localIP(192, 168, 4, 1);
   IPAddress gateway(192, 168, 4, 1);
   IPAddress subnet(255, 255, 255, 0);

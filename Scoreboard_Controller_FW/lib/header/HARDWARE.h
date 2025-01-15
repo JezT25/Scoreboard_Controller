@@ -7,7 +7,7 @@
 #ifndef HARDWARE_h
 #define HARDWARE_h
 
-#define BUZZER          13 // 2 is original | swithched now para di saba
+#define BUZZER          2
 #define HORN            39
 
 #define FT_A            53

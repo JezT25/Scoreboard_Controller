@@ -1,0 +1,24 @@
+/*******************************************
+	DEVELOPED BY JEZREEL TAN - DEC 2023
+	jztan25@gmail.com
+	(0917) 443 2532
+*******************************************/
+
+#ifndef WIFI_h
+#define WIFI_h
+
+#define SERVER		        "http://192.168.4.1:80/"
+#define WIFI_INTERVAL       100
+#define CONNECTING_INTERVAL 1000
+
+class WIFI_class : private HARDWARE_class {
+	private:
+		HTTPClient	http;
+		WiFiClient	client;
+
+    public:
+		void Initialize();
+        void GetUpdate();
+};
+
+#endif
