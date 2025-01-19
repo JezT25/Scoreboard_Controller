@@ -8,12 +8,13 @@ This repository provides the code and documentation for controlling a scoreboard
 
 1. [Overview](#overview)
 2. [Hardware Setup](#hardware-setup)
-3. [Programming Method](#programming-method)
-4. [Programming Steps](#programming-steps)
-5. [Connections and Pinouts](#connections-and-pinouts)
-6. [DIP Switch Settings](#dip-switch-settings)
-7. [Troubleshooting](#troubleshooting)
-8. [License](#license)
+3. [Wi-Fi Configuration](#wi-fi-configuration)
+4. [Programming Method](#programming-method)
+5. [Programming Steps](#programming-steps)
+6. [Connections and Pinouts](#connections-and-pinouts)
+7. [DIP Switch Settings](#dip-switch-settings)
+8. [Troubleshooting](#troubleshooting)
+9. [License](#license)
 
 ---
 
@@ -53,6 +54,24 @@ The project consists of multiple components that communicate with each other ove
 - NodeMCU 8266 (for Wi-Fi communication)
 - NodeMCU 8266 (for shot clock control)
 - Level shifter (3.3V to 5V for serial communication)
+
+---
+
+<a id="wi-fi-configuration"></a>
+## Wi-Fi Configuration
+
+To set up the Wi-Fi network credentials for the system, you need to modify the firmware files for the Wi-Fi modules:
+
+1. Open the `Scoreboard_Controller_WiFi_FW.ino` file.
+2. Locate the definitions for `WIFI_SSID` and `WIFI_PASSWORD`.
+3. Replace the placeholder values with your Wi-Fi network's SSID and password.
+
+Similarly, for the shot clock module:
+1. Open the `Shotclock_FW.ino` file.
+2. Locate the definitions for `WIFI_SSID` and `WIFI_PASSWORD`.
+3. Replace the placeholder values with your Wi-Fi network's SSID and password.
+
+Save and upload the modified firmware to the respective NodeMCU boards.
 
 ---
 
