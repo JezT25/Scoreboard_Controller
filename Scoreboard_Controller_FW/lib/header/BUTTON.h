@@ -3,9 +3,10 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
-
 #ifndef BUTTON_h
 #define BUTTON_h
+
+#include "../setup.hpp"
 
 #define DEBOUNCE_NONE   0
 #define DEBOUNCE_SHORT  50

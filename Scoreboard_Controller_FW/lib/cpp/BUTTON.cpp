@@ -3,6 +3,7 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
+#include "../setup.hpp"
 
 void BUTTON_class::ButtonReleaseFunctions(int i) {
     const bool isTimeMinPressed  = digitalRead(TIME_MIN);
@@ -121,7 +122,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 else
                 {
-                    IData.SCORE_HOME == 99 ? IData.SCORE_HOME = 0 : IData.SCORE_HOME++;
+                    IData.SCORE_HOME == 199 ? IData.SCORE_HOME = 0 : IData.SCORE_HOME++;
                 }
                 Beep(BEEP_SHORT, TONE_HIGH);
                 break;
@@ -136,7 +137,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 else
                 {
-                    IData.SCORE_HOME == 0 ? IData.SCORE_HOME = 99 : IData.SCORE_HOME--;
+                    IData.SCORE_HOME == 0 ? IData.SCORE_HOME = 199 : IData.SCORE_HOME--;
                 }
                 Beep(BEEP_SHORT, TONE_LOW);
                 break;
@@ -151,7 +152,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 else
                 {
-                    IData.SCORE_AWAY == 99 ? IData.SCORE_AWAY = 0 : IData.SCORE_AWAY++;
+                    IData.SCORE_AWAY == 199 ? IData.SCORE_AWAY = 0 : IData.SCORE_AWAY++;
                 }
                 Beep(BEEP_SHORT, TONE_HIGH);
                 break;
@@ -166,7 +167,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 else
                 {
-                    IData.SCORE_AWAY == 0 ? IData.SCORE_AWAY = 99 : IData.SCORE_AWAY--;
+                    IData.SCORE_AWAY == 0 ? IData.SCORE_AWAY = 199 : IData.SCORE_AWAY--;
                 }
                 Beep(BEEP_SHORT, TONE_LOW);
                 break;

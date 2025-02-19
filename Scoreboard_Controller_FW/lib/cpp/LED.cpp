@@ -3,6 +3,7 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
+#include "../setup.hpp"
 
 void LED_class::UpdateMiniBuffer() {
     for (int i = 0; i < 4; i++)
@@ -190,7 +191,7 @@ void LED_class::RefreshBuffer() {
     }
     if(IData.SCORE_HOME != pScore_Home)
     {
-        UpdateBuffer(IData.SCORE_HOME / 10, SCORE_HOME_TENS);
+        UpdateBuffer((IData.SCORE_HOME % 100) / 10, SCORE_HOME_TENS);
         UpdateBuffer(IData.SCORE_HOME % 10, SCORE_HOME_ONES);
         pScore_Home = IData.SCORE_HOME;
     }
@@ -206,7 +207,7 @@ void LED_class::RefreshBuffer() {
     }
     if(IData.SCORE_AWAY != pScore_Away)
     {
-        UpdateBuffer(IData.SCORE_AWAY / 10, SCORE_AWAY_TENS);
+        UpdateBuffer((IData.SCORE_AWAY % 100) / 10, SCORE_AWAY_TENS);
         UpdateBuffer(IData.SCORE_AWAY % 10, SCORE_AWAY_ONES);
         pScore_Away = IData.SCORE_AWAY;
     }

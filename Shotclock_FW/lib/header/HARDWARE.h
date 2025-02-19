@@ -7,8 +7,10 @@
 #ifndef HARDWARE_h
 #define HARDWARE_h
 
+#include "../setup.hpp"
+
 #define LED_FREQ			0.005
-#define FETCH_INTERVAL 		50
+#define FETCH_INTERVAL 		25
 
 #define DISABLE_DIGIT		15
 

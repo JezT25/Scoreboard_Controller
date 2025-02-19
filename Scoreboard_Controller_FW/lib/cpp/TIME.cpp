@@ -3,7 +3,7 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
-
+#include "../setup.hpp"
 
 void TIME_class::SetRTC() {
     rtc.setTime(IData.CLOCK_HOUR, IData.CLOCK_MINUTE, 0);

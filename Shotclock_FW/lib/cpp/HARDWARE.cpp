@@ -3,6 +3,7 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
+#include "../setup.hpp"
 
 volatile int HARDWARE_class::Segment_1      = 0;
 volatile int HARDWARE_class::Segment_2      = 0;

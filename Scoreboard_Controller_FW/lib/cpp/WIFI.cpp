@@ -3,6 +3,7 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
+#include "../setup.hpp"
 
 String IDATA::toJSON() {
     static char buffer[350]; // Allocate just enough buffer space

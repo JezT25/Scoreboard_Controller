@@ -3,9 +3,10 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
-
 #ifndef TIME_h
 #define TIME_h
+
+#include "../setup.hpp"
 
 class TIME_class : private HARDWARE_class {
     private:

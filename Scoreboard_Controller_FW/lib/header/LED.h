@@ -3,9 +3,10 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
-
 #ifndef LED_h
 #define LED_h
+
+#include "../setup.hpp"
 
 #define BLINK_INTERVAL 300
 #define BLINK_HALFSEC  500

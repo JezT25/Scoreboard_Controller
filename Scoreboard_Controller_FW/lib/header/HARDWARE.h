@@ -3,9 +3,10 @@
 	jztan25@gmail.com
 	(0917) 443 2532
 *******************************************/
-
 #ifndef HARDWARE_h
 #define HARDWARE_h
+
+#include "../setup.hpp"
 
 #define BUZZER          2
 #define HORN            39
