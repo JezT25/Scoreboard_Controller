@@ -12,7 +12,7 @@ void TIME_class::SetRTC() {
 void TIME_class::EndHander() {
     if(endSC && millis() - prev_SCEnd >= BEEP_EX_LONG)
     {
-        IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : 24;
+        IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : IData.SHOTCLOCK;
         endSC = false;
     }
 

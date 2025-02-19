@@ -5,7 +5,7 @@
 *******************************************/
 #include "../setup.hpp"
 
-volatile int HARDWARE_class::Period         = 1;
+volatile int HARDWARE_class::Period         = FIRST_PERIOD;
 volatile int HARDWARE_class::Posession      = 0;
 volatile int HARDWARE_class::Time_Minute    = 0;
 volatile int HARDWARE_class::Time_Seconds   = 0;

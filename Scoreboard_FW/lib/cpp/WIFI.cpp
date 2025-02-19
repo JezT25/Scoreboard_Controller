@@ -9,6 +9,7 @@ void WIFI_class::Initialize() {
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
     while (WiFi.status() != WL_CONNECTED) {
+        Period = (Period == 8) ? 4 : (Period == 4) ? 2 : (Period == 2) ? 1 : 8;
         Time_Minute = Time_Minute == 99 ? 0 : Time_Minute + 11;
         Time_Seconds = Time_Minute;
         Home_Score = Time_Minute;
@@ -17,7 +18,6 @@ void WIFI_class::Initialize() {
         Away_Fouls = Time_Minute / 10;
         Home_RTO = Time_Minute / 10;
         Away_RTO = Time_Minute / 10;
-        Period = Time_Minute / 10;
         delay(CONNECTING_INTERVAL);
     }
 
@@ -30,11 +30,11 @@ void WIFI_class::GetUpdate() {
     if (WiFi.status() == WL_CONNECTED && http.GET() > 0) {
         JsonDocument doc;
         deserializeJson(doc, http.getString());
+        Time_Minute = (Colon_Flag == GAME_SECONDS) ? doc["TIME_SECOND"] : doc["TIME_MINUTE"];
+        Time_Seconds = (Colon_Flag == GAME_SECONDS) ? doc["TIME_MS"].as<int>() * 10 : doc["TIME_SECOND"];
         Period = doc["GAME_PERIOD"];
         Posession = doc["GAME_POSESSION"];
         Colon_Flag = doc["GAME_DOTS"];
-        Time_Minute = (Colon_Flag == GAME_SECONDS) ? doc["TIME_SECOND"] : doc["TIME_MINUTE"];
-        Time_Seconds = (Colon_Flag == GAME_SECONDS) ? doc["TIME_MS"].as<int>() * 10 : doc["TIME_SECOND"];
         Home_Score = doc["SCORE_HOME"];
         Away_Score = doc["SCORE_AWAY"];
         Home_Fouls = doc["FOUL_HOME"];

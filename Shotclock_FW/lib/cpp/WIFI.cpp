@@ -10,8 +10,8 @@ void WIFI_class::Initialize() {
 
     while (WiFi.status() != WL_CONNECTED) {
         Segment_1 = Segment_1 == 99 ? 0 : Segment_1 + 11;
-        Segment_2 = Segment_2 == 99 ? 0 : Segment_2 + 11;
-        Segment_3 = Segment_3 == 99 ? 0 : Segment_3 + 11;
+        Segment_2 = Segment_1;
+        Segment_3 = Segment_1;
         delay(CONNECTING_INTERVAL);
     }
 
