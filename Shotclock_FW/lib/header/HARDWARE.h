@@ -8,7 +8,7 @@
 #define HARDWARE_h
 
 #define LED_FREQ			0.005
-#define FETCH_INTERVAL 		100
+#define FETCH_INTERVAL 		50
 
 #define DISABLE_DIGIT		15
 

@@ -7,7 +7,7 @@
 #ifndef WIFI_h
 #define WIFI_h
 
-#define WIFI_INTERVAL 100
+#define WIFI_INTERVAL 50
 
 class WIFI_class : private HARDWARE_class {
     private:
