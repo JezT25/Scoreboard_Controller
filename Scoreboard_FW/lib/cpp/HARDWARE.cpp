@@ -104,8 +104,8 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         digitalWrite(D2, Posession == HOME_POSESSION);
         digitalWrite(D3, Posession == AWAY_POSESSION);
         digitalWrite(D4, Home_Score > 99);
-        digitalWrite(D5, 0);
-        digitalWrite(D6, Away_Score > 99);
+        digitalWrite(D5, Away_Score > 99);
+        digitalWrite(D6, 0);
         digitalWrite(D7, 0);
     }
 

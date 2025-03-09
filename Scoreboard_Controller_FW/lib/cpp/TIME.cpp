@@ -19,8 +19,6 @@ void TIME_class::EndHander() {
     if(endPeriod && (millis() - prev_periodEnd >= BEEP_EXX_LONG || ISystem.TIME_MODE == TIME_RUNNING))
     {
         ISystem.TIME_MODE = TIME_PAUSE;
-        IData.TIME_MINUTE = original_MIN;
-        IData.TIME_SECOND = original_SEC;
         IData.TIME_MS = 0;
         IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? NO_PERIOD : (IData.GAME_PERIOD >> 1);
         IData.GAME_POSESSION = NO_POSESSION;
@@ -40,8 +38,6 @@ void TIME_class::MainDisplayFunction() {
 
     if(ISystem.TIME_MODE == TIME_ADJUST)
     {
-        original_MIN = IData.TIME_MINUTE;
-        original_SEC = IData.TIME_SECOND;
         IData.TIME_MS = 0;
     }
     else if(ISystem.TIME_MODE == TIME_RUNNING)

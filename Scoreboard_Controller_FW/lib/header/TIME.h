@@ -10,8 +10,6 @@
 
 class TIME_class : private HARDWARE_class {
     private:
-        volatile unsigned int original_MIN = IData.TIME_MINUTE;
-        volatile unsigned int original_SEC = IData.TIME_SECOND;
         volatile unsigned long prev_periodEnd;
         volatile unsigned long prev_SCEnd;
         volatile bool endPeriod = false;

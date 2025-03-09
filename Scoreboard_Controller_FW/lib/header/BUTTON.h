@@ -21,6 +21,8 @@ class BUTTON_class : private HARDWARE_class {
     private:
         bool SCHeldWhileRunning = false;
         bool TimeOnOFFPressed   = false;
+        unsigned int original_MIN = IData.TIME_MINUTE;
+        unsigned int original_SEC = IData.TIME_SECOND;
         unsigned int debounceOffset;
         unsigned long lastTimeButtonTime;
         unsigned long lastLongDebounceTime;

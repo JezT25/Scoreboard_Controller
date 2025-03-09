@@ -23,6 +23,11 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
     {
         if(ISystem.TIME_MODE != TIME_CLOCK && millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
         {
+            if(ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0)
+            {
+                IData.TIME_MINUTE = original_MIN;
+                IData.TIME_SECOND = original_SEC;
+            }
             ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
             ISystem.SC_TIME_MODE = TIME_PAUSE;
             Beep(BEEP_SHORT, TONE_HIGH);
@@ -91,6 +96,11 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
             if(ISystem.TIME_MODE == TIME_RUNNING) return;
             if(ISystem.TIME_MODE == TIME_PAUSE || ISystem.TIME_MODE == TIME_ADJUST)
             {
+                if(ISystem.TIME_MODE == TIME_ADJUST)
+                {
+                    original_MIN = IData.TIME_MINUTE;
+                    original_SEC = IData.TIME_SECOND;
+                }
                 ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_PAUSE ? TIME_ADJUST : TIME_PAUSE;
             }
             else if(ISystem.TIME_MODE == TIME_CLOCK)
