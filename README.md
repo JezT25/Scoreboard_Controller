@@ -1,25 +1,26 @@
-﻿# Project: Scoreboard Controller System
+# Scoreboard Controller System 🏀
 
 This repository provides the code and documentation for controlling a scoreboard and shot clock system using multiple microcontrollers, including Arduino Mega 2560, NodeMCU 8266, and ESP8266-based boards. The system allows for real-time control and synchronization of the scoreboard and shot clock via wireless communication.
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-1. [Overview](#overview)
-2. [Hardware Setup](#hardware-setup)
-3. [Wi-Fi Configuration](#wi-fi-configuration)
-4. [Programming Method](#programming-method)
-5. [Programming Steps](#programming-steps)
-6. [Connections and Pinouts](#connections-and-pinouts)
-7. [DIP Switch Settings](#dip-switch-settings)
-8. [Troubleshooting](#troubleshooting)
-9. [License](#license)
+1. [📝 Overview](#overview)
+2. [🛠 Hardware Setup](#hardware-setup)
+3. [📶 Wi-Fi Configuration](#wi-fi-configuration)
+4. [💻 Programming Method](#programming-method)
+5. [🛠 Programming Steps](#programming-steps)
+6. [🔌 Connections and Pinouts](#connections-and-pinouts)
+7. [🕹 DIP Switch Settings](#dip-switch-settings)
+8. [🆘 Troubleshooting](#troubleshooting)
+9. [📜 License](#license)
+10. [👨‍💻 Author](#author)
 
 ---
 
 <a id="overview"></a>
-## Overview
+## 📝 Overview
 
 The project consists of multiple components that communicate with each other over Wi-Fi and serial communication:
 
@@ -39,7 +40,7 @@ The project consists of multiple components that communicate with each other ove
 ---
 
 <a id="hardware-setup"></a>
-## Hardware Setup
+## 🛠 Hardware Setup
 
 ### Components:
 
@@ -58,7 +59,7 @@ The project consists of multiple components that communicate with each other ove
 ---
 
 <a id="wi-fi-configuration"></a>
-## Wi-Fi Configuration
+## 📶 Wi-Fi Configuration
 
 To set up the Wi-Fi network credentials for the system, you need to modify the firmware files for the Wi-Fi modules:
 
@@ -76,7 +77,7 @@ Save and upload the modified firmware to the respective NodeMCU boards.
 ---
 
 <a id="programming-method"></a>
-## Programming Method
+## 💻 Programming Method
 
 Follow these steps to flash the correct firmware onto each board:
 
@@ -88,7 +89,7 @@ Follow these steps to flash the correct firmware onto each board:
 ---
 
 <a id="programming-steps"></a>
-## Programming Steps
+## 🛠 Programming Steps
 
 ### Step 1: Programming the Mega+WiFi ESP8266
 
@@ -114,7 +115,7 @@ Follow these steps to flash the correct firmware onto each board:
 ---
 
 <a id="connections-and-pinouts"></a>
-## Connections and Pinouts
+## 🔌 Connections and Pinouts
 
 ### Main Board (Mega+WiFi):
 
@@ -134,7 +135,7 @@ Follow these steps to flash the correct firmware onto each board:
 ---
 
 <a id="dip-switch-settings"></a>
-## DIP Switch Settings
+## 🕹 DIP Switch Settings
 
 Ensure the following DIP switch settings are correctly configured for each step:
 
@@ -147,10 +148,11 @@ Ensure the following DIP switch settings are correctly configured for each step:
 Refer to the DIP switch diagram for further details.
 
 ![](/docs/dipswitch.png)
+
 ---
 
 <a id="troubleshooting"></a>
-## Troubleshooting
+## 🆘 Troubleshooting
 
 ### Issue: Communication Errors
 
@@ -167,6 +169,14 @@ Refer to the DIP switch diagram for further details.
 ---
 
 <a id="license"></a>
-## License
+## 📜 License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+---
+
+<a id="author"></a>
+## 👨‍💻 Author
+
+This project was created by Jezreel Tan. Feel free to contact me at jztan25@gmail.com.
+
