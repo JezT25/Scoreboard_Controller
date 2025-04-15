@@ -28,7 +28,10 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
                 IData.TIME_MINUTE = original_MIN;
                 IData.TIME_SECOND = original_SEC;
             }
-            ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
+            else
+            {
+                ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
+            }
             ISystem.SC_TIME_MODE = TIME_PAUSE;
             Beep(BEEP_SHORT, TONE_HIGH);
         }

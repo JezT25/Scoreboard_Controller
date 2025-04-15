@@ -10,8 +10,8 @@
 /** LIBRARIES **/
 #include <Arduino.h>
 #include "LowPower.h"
-#include <DS3231.h>
-DS3231 rtc(SDA, SCL);
+#include <DS3231RinkyDink.h>
+DS3231RinkyDink rtc(SDA, SCL);
 
 #include "IDEVICE.h"
 IDATA IData;
