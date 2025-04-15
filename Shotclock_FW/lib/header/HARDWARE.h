@@ -28,6 +28,8 @@
 #define GAME_SECONDS    	1
 #define GAME_MINUTE     	3
 
+#define TWO_DIGIT_DASH      110
+
 class HARDWARE_class {
     private:
         volatile int CurrentSegment  = TENS_SEGMENT;

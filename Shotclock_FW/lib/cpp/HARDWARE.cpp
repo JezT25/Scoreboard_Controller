@@ -26,12 +26,18 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
     digitalWrite(D10, LOW);
 
     if (CurrentSegment == TENS_SEGMENT || CurrentSegment == ONES_SEGMENT || CurrentSegment == SC_SEGMENT) {
-        int TENS = (Colon_Flag == GAME_HIDE) ? DISABLE_DIGIT : 
-                (CurrentSegment == TENS_SEGMENT) ? Segment_1 / 10 : 
-                (CurrentSegment == ONES_SEGMENT) ? Segment_2 / 10 : Segment_3 / 10;
-        int ONES = (Colon_Flag == GAME_HIDE) ? DISABLE_DIGIT : 
-                (CurrentSegment == TENS_SEGMENT) ? Segment_1 % 10 : 
-                (CurrentSegment == ONES_SEGMENT) ? (Colon_Flag == 3 ? Segment_2 % 10 : 15) : Segment_3 % 10;
+        int TENS, ONES;
+
+        if (Colon_Flag == GAME_HIDE || (CurrentSegment == SC_SEGMENT && Segment_3 == TWO_DIGIT_DASH))
+        {
+            TENS = DISABLE_DIGIT;
+            ONES = DISABLE_DIGIT;
+        }
+        else
+        {
+            TENS = ((CurrentSegment == TENS_SEGMENT ? Segment_1 : CurrentSegment == ONES_SEGMENT ? Segment_2 : Segment_3) / 10) ?: DISABLE_DIGIT;
+            ONES = CurrentSegment == TENS_SEGMENT ? Segment_1 % 10 : CurrentSegment == ONES_SEGMENT ? Colon_Flag == 3 ? Segment_2 % 10 : 15 : Segment_3 % 10;
+        }
 
         // Set Digits
         digitalWrite(D8, (CurrentSegment == TENS_SEGMENT || CurrentSegment == SC_SEGMENT) ? HIGH : LOW);
