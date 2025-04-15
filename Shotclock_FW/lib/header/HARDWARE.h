@@ -21,9 +21,6 @@
 #define SC_SEGMENT			5
 #define TOUT_SEGMENT		6
 
-#define TIMEOUT_OFF			0
-#define TIMEOUT_ON			1
-
 #define GAME_HIDE       	0
 #define GAME_SECONDS    	1
 #define GAME_MINUTE     	3

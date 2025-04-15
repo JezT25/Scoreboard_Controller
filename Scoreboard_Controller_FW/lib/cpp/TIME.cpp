@@ -16,16 +16,13 @@ void TIME_class::EndHander() {
         endSC = false;
     }
 
-    if(endPeriod && (millis() - prev_periodEnd >= BEEP_EXX_LONG || ISystem.TIME_MODE == TIME_RUNNING))
+    if(endPeriod && millis() - prev_periodEnd >= BEEP_EXX_LONG)
     {
         ISystem.TIME_MODE = TIME_PAUSE;
         IData.TIME_MS = 0;
         IData.GAME_PERIOD = (IData.GAME_PERIOD == FOURTH_PERIOD) ? NO_PERIOD : (IData.GAME_PERIOD >> 1);
         IData.GAME_POSESSION = NO_POSESSION;
-        IData.GAME_DOTS = GAME_MINUTE;
         endPeriod = false;
-
-        IData.SHOTCLOCK = 24;
     }
 }
 
@@ -61,7 +58,8 @@ void TIME_class::MainDisplayFunction() {
                 }
                 else
                 {
-                    IData.SHOTCLOCK = 0;
+                    IData.TIMEOUT_FLAG = HIGH;
+                    IData.SHOTCLOCK = TWO_DIGIT_DASH;
                     ISystem.TIME_MODE = TIME_PAUSE;
                     ISystem.SC_TIME_MODE = TIME_RESET;
                     Beep(BEEP_EXX_LONG, TONE_HIGH);
@@ -86,6 +84,7 @@ void TIME_class::ShotclockFunction() {
     {
         if (IData.SHOTCLOCK == 0)
         {
+            IData.TIMEOUT_FLAG = HIGH;
             ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : ISystem.TIME_MODE;
             ISystem.SC_TIME_MODE = TIME_RESET;
             Beep(BEEP_EX_LONG, TONE_HIGH);

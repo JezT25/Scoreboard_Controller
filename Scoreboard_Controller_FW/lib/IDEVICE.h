@@ -7,6 +7,8 @@
 #ifndef IDEVICE_h
 #define IDEVICE_h
 
+#include "setup.hpp"
+
 #define NO_PERIOD           16
 #define FIRST_PERIOD        8
 #define SECOND_PERIOD       4
@@ -69,6 +71,8 @@ class IDATA {
         volatile unsigned int GAME_POSESSION    =    NO_POSESSION;
 
         volatile unsigned int GAME_DOTS         =    GAME_MINUTE;
+
+        volatile bool TIMEOUT_FLAG              =    LOW;
 
         String toJSON();
 };

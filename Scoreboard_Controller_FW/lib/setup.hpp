@@ -10,7 +10,7 @@
 /** LIBRARIES **/
 #include <Arduino.h>
 #include "LowPower.h"
-#include <DS3231RinkyDink.h>
+#include <DS3231RinkyDink.h> //http://www.rinkydinkelectronics.com/library.php?id=73
 DS3231RinkyDink rtc(SDA, SCL);
 
 #include "IDEVICE.h"

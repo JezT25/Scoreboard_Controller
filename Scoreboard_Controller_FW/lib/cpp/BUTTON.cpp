@@ -27,6 +27,9 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
             {
                 IData.TIME_MINUTE = original_MIN;
                 IData.TIME_SECOND = original_SEC;
+                IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : 24;
+                ISystem.SC_TIME_MODE = TIME_RESET;
+                IData.TIMEOUT_FLAG = LOW;
             }
             else
             {
@@ -229,6 +232,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 break;
             case SC_PRESET:
                 if(!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
+                if(ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0) return;
                 if(!holdButton)
                 {   
                     if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
@@ -247,6 +251,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                     {
                         IData.SHOTCLOCK = 24;
                     }
+                    IData.TIMEOUT_FLAG = LOW;
                     Beep(BEEP_SHORT, TONE_HIGH);
                 }
                 if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;

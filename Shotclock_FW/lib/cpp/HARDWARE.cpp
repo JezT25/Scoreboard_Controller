@@ -9,7 +9,7 @@ volatile int HARDWARE_class::Segment_1      = 0;
 volatile int HARDWARE_class::Segment_2      = 0;
 volatile int HARDWARE_class::Segment_3      = 0;
 volatile int HARDWARE_class::Colon_Flag     = GAME_MINUTE;
-volatile int HARDWARE_class::Timeout_Flag   = TIMEOUT_OFF;
+volatile int HARDWARE_class::Timeout_Flag   = LOW;
 
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
     // Clear
@@ -64,7 +64,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         digitalWrite(D9, LOW);
         digitalWrite(D10, HIGH);
     }
-    else if (Timeout_Flag == TIMEOUT_ON && CurrentSegment == TOUT_SEGMENT)
+    else if (Timeout_Flag == HIGH && CurrentSegment == TOUT_SEGMENT)
     {
         digitalWrite(D8, HIGH);
         digitalWrite(D9, HIGH);

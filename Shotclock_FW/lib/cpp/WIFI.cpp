@@ -25,6 +25,7 @@ void WIFI_class::GetUpdate() {
         JsonDocument doc;
         deserializeJson(doc, http.getString());
         Colon_Flag = doc["GAME_DOTS"];
+        Timeout_Flag = doc["TIMEOUT_FLAG"];
         Segment_1 = (Colon_Flag == GAME_SECONDS) ? doc["TIME_SECOND"] : doc["TIME_MINUTE"];
         Segment_2 = (Colon_Flag == GAME_SECONDS) ? doc["TIME_MS"].as<int>() * 10 : doc["TIME_SECOND"];
         Segment_3 = doc["SHOTCLOCK"];

@@ -188,6 +188,7 @@ void LED_class::RefreshBuffer() {
                 pTime_Second = IData.TIME_SECOND;
             }
         }
+        IData.GAME_DOTS = GAME_MINUTE;
     }
     if(IData.SCORE_HOME != pScore_Home)
     {

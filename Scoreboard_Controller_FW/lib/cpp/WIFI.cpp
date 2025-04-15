@@ -15,10 +15,10 @@ String IDATA::toJSON() {
         "\"SHOTCLOCK\":%d,\"TIME_MINUTE\":%d,\"TIME_SECOND\":%d,"
         "\"TIME_MS\":%d,\"TIME_SC_MS\":%d,\"CLOCK_HOUR\":%d,"
         "\"CLOCK_MINUTE\":%d,\"GAME_PERIOD\":%d,\"GAME_POSESSION\":%d,"
-        "\"GAME_DOTS\":%d}",
+        "\"GAME_DOTS\":%d,\"TIMEOUT_FLAG\":%d}",
         SCORE_HOME, FOUL_HOME, TIMEOUT_HOME, SCORE_AWAY, FOUL_AWAY, TIMEOUT_AWAY,
         SHOTCLOCK, TIME_MINUTE, TIME_SECOND, TIME_MS, TIME_SC_MS, CLOCK_HOUR,
-        CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS
+        CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS, TIMEOUT_FLAG
     );
 
     if (length < 0 || length >= sizeof(buffer)) {
