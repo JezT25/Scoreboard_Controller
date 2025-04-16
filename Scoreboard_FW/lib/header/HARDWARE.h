@@ -18,6 +18,7 @@
 #define SECOND_PERIOD       4
 #define THIRD_PERIOD        2
 #define FOURTH_PERIOD       1
+#define FIFTH_PERIOD        15
 
 #define HOME_POSESSION      8
 #define AWAY_POSESSION      4
@@ -42,7 +43,7 @@
 class HARDWARE_class {
     private:
         const int segmentPins[8]     = { D0, D1, D2, D3, D4, D5, D6, D7 };
-        const byte digitPatterns[11] = {
+        const byte digitPatterns[12] = {
             0b00111111, // 0
             0b00000110, // 1
             0b01011011, // 2
@@ -53,7 +54,8 @@ class HARDWARE_class {
             0b00000111, // 7
             0b01111111, // 8
             0b01101111, // 9
-            0b00000000  // Nothing
+            0b00000000, // Nothing
+            0b11111001  // E
         };
         volatile int CurrentSegment  = TENS_SEGMENT;
         Ticker timer;

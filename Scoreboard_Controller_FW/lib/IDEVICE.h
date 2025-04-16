@@ -14,6 +14,7 @@
 #define SECOND_PERIOD       4
 #define THIRD_PERIOD        2
 #define FOURTH_PERIOD       1
+#define FIFTH_PERIOD        15
 
 #define HOME_POSESSION      8
 #define AWAY_POSESSION      4

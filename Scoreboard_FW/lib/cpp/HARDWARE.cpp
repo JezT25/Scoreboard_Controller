@@ -117,7 +117,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         }
         else if(CurrentSegment == PERIOD_SEGMENT)
         {
-            byte pattern = digitPatterns[(Period == NO_PERIOD) ? 10 : (Period == FIRST_PERIOD) ? 1 : (Period == SECOND_PERIOD) ? 2 : (Period == THIRD_PERIOD) ? 3 : (Period == FOURTH_PERIOD) ? 4 : 1];
+            byte pattern = digitPatterns[(Period == NO_PERIOD) ? 10 : (Period == FIRST_PERIOD) ? 1 : (Period == SECOND_PERIOD) ? 2 : (Period == THIRD_PERIOD) ? 3 : (Period == FOURTH_PERIOD) ? 4 : (Period == FIFTH_PERIOD) ? 11 : 1];
             for (int i = 0; i < 7; i++) {
                 digitalWrite(segmentPins[i], pattern & (1 << i) ? HIGH : LOW);
             }

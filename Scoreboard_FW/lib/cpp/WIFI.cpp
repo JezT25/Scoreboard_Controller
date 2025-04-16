@@ -62,7 +62,7 @@ void WIFI_class::GetUpdate() {
             pAway_Fouls = Away_Fouls;
             pHome_RTO = Home_RTO;
             pAway_RTO = Away_RTO;
-            justBoot = false;
+            coldboot = false;
         }
     }
     delay(FETCH_INTERVAL);
