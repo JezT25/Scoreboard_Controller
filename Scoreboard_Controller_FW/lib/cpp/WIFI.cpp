@@ -15,10 +15,12 @@ String IDATA::toJSON() {
         "\"SHOTCLOCK\":%d,\"TIME_MINUTE\":%d,\"TIME_SECOND\":%d,"
         "\"TIME_MS\":%d,\"TIME_SC_MS\":%d,\"CLOCK_HOUR\":%d,"
         "\"CLOCK_MINUTE\":%d,\"GAME_PERIOD\":%d,\"GAME_POSESSION\":%d,"
-        "\"GAME_DOTS\":%d,\"TIMEOUT_FLAG\":%d}",
+        "\"GAME_DOTS\":%d,\"TIMEOUT_FLAG\":%d,\"CLOCK_FLAG\":%d,"
+        "\"POWER_STATE\":%d}",
         SCORE_HOME, FOUL_HOME, TIMEOUT_HOME, SCORE_AWAY, FOUL_AWAY, TIMEOUT_AWAY,
         SHOTCLOCK, TIME_MINUTE, TIME_SECOND, TIME_MS, TIME_SC_MS, CLOCK_HOUR,
-        CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS, TIMEOUT_FLAG
+        CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS, TIMEOUT_FLAG, CLOCK_FLAG,
+        ISystem.POWER_STATE
     );
 
     if (length < 0 || length >= sizeof(buffer)) {
@@ -30,6 +32,8 @@ String IDATA::toJSON() {
 
 
 void WIFI_class::SendUpdate() {
+    if(ISystem.POWER_STATE != POWER_ON) return;
+
 	if(millis() - lastWiFiUpdate >= WIFI_INTERVAL) {
 		lastWiFiUpdate = millis();
 		Serial3.println(IData.toJSON());

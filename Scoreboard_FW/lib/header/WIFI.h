@@ -14,6 +14,7 @@
 
 class WIFI_class : private HARDWARE_class {
 	private:
+		bool coldboot = true;
 		HTTPClient	http;
 		WiFiClient	client;
 

@@ -27,6 +27,9 @@
 
 #define TWO_DIGIT_DASH      110
 
+#define POWER_OFF           0
+#define POWER_ON            1
+
 class HARDWARE_class {
     private:
         volatile int CurrentSegment  = TENS_SEGMENT;
@@ -38,7 +41,8 @@ class HARDWARE_class {
         static volatile int Segment_2;
         static volatile int Segment_3;
         static volatile int Colon_Flag;
-        static volatile int Timeout_Flag;
+        static volatile bool Timeout_Flag;
+        static volatile bool Power_Flag;
 
     public:
         void Initialize();

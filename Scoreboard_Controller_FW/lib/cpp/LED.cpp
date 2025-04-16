@@ -42,31 +42,33 @@ void LED_class::RefreshBuffer() {
         {
             pTime_Minute = 100;
             pTime_Second = 100;
-            // UpdateBuffer(10, SCORE_HOME_TENS);
-            // UpdateBuffer(10, SCORE_HOME_ONES);
-            // UpdateBuffer(10, SCORE_AWAY_ONES);
-            // UpdateBuffer(10, SCORE_AWAY_TENS);
-            // UpdateBuffer(10, FOUL_HOME);
-            // UpdateBuffer(10, FOUL_AWAY);
-            // UpdateBuffer(10, TIMEOUT_HOME);
-            // UpdateBuffer(10, TIMEOUT_AWAY);
+            UpdateBuffer(10, SCORE_HOME_TENS);
+            UpdateBuffer(10, SCORE_HOME_ONES);
+            UpdateBuffer(10, SCORE_AWAY_ONES);
+            UpdateBuffer(10, SCORE_AWAY_TENS);
+            UpdateBuffer(10, FOUL_HOME);
+            UpdateBuffer(10, FOUL_AWAY);
+            UpdateBuffer(10, TIMEOUT_HOME);
+            UpdateBuffer(10, TIMEOUT_AWAY);
             UpdateBuffer(10, SHOTCLOCK_TENS);
             UpdateBuffer(10, SHOTCLOCK_ONES);
-            // IData.GAME_PERIOD = NO_PERIOD;
-            // IData.GAME_POSESSION = NO_POSESSION;
-            // IData.GAME_DOTS = GAME_MINUTE;
+            IData.GAME_PERIOD = NO_PERIOD;
+            IData.GAME_POSESSION = NO_POSESSION;
+            IData.GAME_DOTS = GAME_MINUTE;
+            IData.CLOCK_FLAG = HIGH;
         }
         else if(pTimeClock == TIME_PAUSE)
         {
             pTime_Minute    = 100;
             pTime_Second    = 100;
-            pScore_Home     = 100;
-            pScore_Away     = 100;
+            pScore_Home     = 200;
+            pScore_Away     = 200;
             pFoul_Home      = 10;
             pFoul_Away      = 10;
             pTimeout_Home   = 10;
             pTimeout_Away   = 10;
             pShotclock      = 0;
+            IData.CLOCK_FLAG = LOW;
         }
         BlinkState = false;
     }
@@ -187,8 +189,8 @@ void LED_class::RefreshBuffer() {
                 UpdateBuffer(IData.TIME_SECOND % 10, TIME_ONES);
                 pTime_Second = IData.TIME_SECOND;
             }
+            IData.GAME_DOTS = GAME_MINUTE;
         }
-        IData.GAME_DOTS = GAME_MINUTE;
     }
     if(IData.SCORE_HOME != pScore_Home)
     {

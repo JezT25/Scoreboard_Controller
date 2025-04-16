@@ -74,6 +74,8 @@ class IDATA {
 
         volatile bool TIMEOUT_FLAG              =    LOW;
 
+        volatile bool CLOCK_FLAG                =    LOW;
+
         String toJSON();
 };
 

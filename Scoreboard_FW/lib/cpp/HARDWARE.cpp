@@ -15,10 +15,20 @@ volatile int HARDWARE_class::Home_Fouls     = 0;
 volatile int HARDWARE_class::Away_Fouls     = 0;
 volatile int HARDWARE_class::Home_RTO       = 0;
 volatile int HARDWARE_class::Away_RTO       = 0;
+volatile int HARDWARE_class::pPeriod        = 10;
+volatile int HARDWARE_class::pPosession     = 10;
+volatile int HARDWARE_class::pHome_Score    = 200;
+volatile int HARDWARE_class::pAway_Score    = 200;
+volatile int HARDWARE_class::pHome_Fouls    = 10;
+volatile int HARDWARE_class::pAway_Fouls    = 10;
+volatile int HARDWARE_class::pHome_RTO      = 10;
+volatile int HARDWARE_class::pAway_RTO      = 10;
 volatile int HARDWARE_class::Colon_Flag     = GAME_MINUTE;
+volatile bool HARDWARE_class::Power_Flag    = POWER_ON;
+volatile bool HARDWARE_class::Clock_Flag    = LOW;
 
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
-    if(Colon_Flag == GAME_HIDE)
+    if(Power_Flag == POWER_OFF)
     {
         digitalWrite(D0, LOW);
         digitalWrite(D1, LOW);
@@ -57,23 +67,35 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 break;
             case ONES_SEGMENT:
                 TENS = Time_Seconds / 10;
-                ONES = Colon_Flag == GAME_MINUTE ? Time_Seconds % 10 : DISABLE_DIGIT;
+                ONES = Colon_Flag == GAME_SECONDS ? DISABLE_DIGIT : Time_Seconds % 10;
                 break;
             case H_SCORE_SEGMENT:
                 TENS = (Home_Score % 100) / 10;
                 ONES = Home_Score % 10;
+                if(Clock_Flag == HIGH && pHome_Score == Home_Score) TENS = ONES = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pHome_Score != Home_Score) pHome_Score = 200;
                 break;
             case A_SCORE_SEGMENT:
                 TENS = (Away_Score % 100) / 10;
                 ONES = Away_Score % 10;
+                if(Clock_Flag == HIGH && pAway_Score == Away_Score) TENS = ONES = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pAway_Score != Away_Score) pAway_Score = 200;
                 break;
             case H_FOULRTO_SEGMENT:
                 TENS = Home_Fouls;
                 ONES = Home_RTO;
+                if(Clock_Flag == HIGH && pHome_Fouls == Home_Fouls) TENS = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pHome_Fouls != Home_Fouls) pHome_Fouls = 10;
+                if(Clock_Flag == HIGH && pHome_RTO == Home_RTO) ONES = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pHome_RTO != Home_RTO) pHome_RTO = 10;
                 break;
             case A_FOULRTO_SEGMENT:
                 TENS = Away_Fouls;
                 ONES = Away_RTO;
+                if(Clock_Flag == HIGH && pAway_Fouls == Away_Fouls) TENS = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pAway_Fouls != Away_Fouls) pAway_Fouls = 10;
+                if(Clock_Flag == HIGH && pAway_RTO == Away_RTO) ONES = DISABLE_DIGIT;
+                else if(Clock_Flag == HIGH && pAway_RTO != Away_RTO) pAway_RTO = 10;
                 break;
         }
 
@@ -111,9 +133,9 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
             digitalWrite(D6, 0);
             digitalWrite(D7, 0);
         }
-    }   
 
-    CurrentSegment = CurrentSegment == POS_SEGMENT ? PERIOD_SEGMENT : ++CurrentSegment;
+        CurrentSegment = CurrentSegment == POS_SEGMENT ? PERIOD_SEGMENT : ++CurrentSegment;
+    }
 }
 
 void HARDWARE_class::Initialize() {
