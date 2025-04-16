@@ -9,8 +9,8 @@
 
 #include "../setup.hpp"
 
-#define LED_FREQ			0.005
-#define FETCH_INTERVAL 		25
+#define LED_FREQ			0.0025
+#define FETCH_INTERVAL 		15
 
 #define DISABLE_DIGIT		15
 

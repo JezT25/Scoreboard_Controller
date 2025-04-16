@@ -108,6 +108,10 @@ Follow these steps to flash the correct firmware onto each board:
 1. **Flash the Wi-Fi Firmware:** Using Arduino IDE, upload the Scoreboard_Controller_WiFi_FW firmware to the NodeMCU 8266 Wi-Fi module.
 2. **Unplug Power:** Disconnect the power after flashing the firmware.
 
+Refer to the image for ESP8266 Flash Settings.
+
+![](/docs/wemosd1mini_flashsettings.png)
+
 ### Step 4: Flash the Shotclock Board
 
 1. **Upload Shotclock Firmware:** Using Arduino IDE, upload the Shotclock_FW firmware to the NodeMCU 8266 controlling the shot clock.

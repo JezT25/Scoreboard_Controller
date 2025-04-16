@@ -6,7 +6,8 @@
 #include "../setup.hpp"
 
 void WIFI_class::Initialize() {
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    if (analogRead(A0) < 900) WiFi.begin(WIFI_SSID1, WIFI_PASSWORD1);
+    else WiFi.begin(WIFI_SSID2, WIFI_PASSWORD2);
 
     while (WiFi.status() != WL_CONNECTED) {
         Period = (Period == 8) ? 4 : (Period == 4) ? 2 : (Period == 2) ? 1 : 8;

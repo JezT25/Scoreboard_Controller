@@ -8,7 +8,7 @@
 
 #include "../setup.hpp"
 
-#define WIFI_INTERVAL 25
+#define WIFI_INTERVAL 15
 
 class WIFI_class : private HARDWARE_class {
     private:

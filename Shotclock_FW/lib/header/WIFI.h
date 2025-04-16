@@ -10,7 +10,6 @@
 #include "../setup.hpp"
 
 #define SERVER		        "http://192.168.4.1:80/"
-#define WIFI_INTERVAL       25
 #define CONNECTING_INTERVAL 1000
 
 class WIFI_class : private HARDWARE_class {
