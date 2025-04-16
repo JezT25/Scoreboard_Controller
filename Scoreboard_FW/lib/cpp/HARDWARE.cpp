@@ -82,16 +82,16 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 else if(Clock_Flag == HIGH && pAway_Score != Away_Score) pAway_Score = 200;
                 break;
             case H_FOULRTO_SEGMENT:
-                TENS = Home_Fouls;
-                ONES = Home_RTO;
+                TENS = Home_Fouls >= 8 ? DISABLE_DIGIT : Home_Fouls;
+                ONES = Home_RTO ?: DISABLE_DIGIT;
                 if(Clock_Flag == HIGH && pHome_Fouls == Home_Fouls) TENS = DISABLE_DIGIT;
                 else if(Clock_Flag == HIGH && pHome_Fouls != Home_Fouls) pHome_Fouls = 10;
                 if(Clock_Flag == HIGH && pHome_RTO == Home_RTO) ONES = DISABLE_DIGIT;
                 else if(Clock_Flag == HIGH && pHome_RTO != Home_RTO) pHome_RTO = 10;
                 break;
             case A_FOULRTO_SEGMENT:
-                TENS = Away_Fouls;
-                ONES = Away_RTO;
+                TENS = Away_Fouls >= 8 ? DISABLE_DIGIT : Away_Fouls;
+                ONES = Away_RTO ?: DISABLE_DIGIT;
                 if(Clock_Flag == HIGH && pAway_Fouls == Away_Fouls) TENS = DISABLE_DIGIT;
                 else if(Clock_Flag == HIGH && pAway_Fouls != Away_Fouls) pAway_Fouls = 10;
                 if(Clock_Flag == HIGH && pAway_RTO == Away_RTO) ONES = DISABLE_DIGIT;
