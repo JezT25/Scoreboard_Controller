@@ -38,7 +38,7 @@ void WIFI_class::GetUpdate() {
         {
             Segment_1 = doc["CLOCK_HOUR"];
             Segment_2 = doc["CLOCK_MINUTE"];
-            Segment_3 = DISABLE_DIGIT;
+            Segment_3 = TWO_DIGIT_DASH;
         }
     }
     delay(FETCH_INTERVAL);

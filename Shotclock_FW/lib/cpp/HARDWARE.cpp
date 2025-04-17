@@ -31,7 +31,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         if (CurrentSegment == TENS_SEGMENT || CurrentSegment == ONES_SEGMENT || CurrentSegment == SC_SEGMENT) {
             int TENS, ONES;
     
-            if (CurrentSegment == SC_SEGMENT && (Segment_3 == TWO_DIGIT_DASH || Segment_3 == DISABLE_DIGIT))
+            if (CurrentSegment == SC_SEGMENT && Segment_3 == TWO_DIGIT_DASH)
             {
                 TENS = DISABLE_DIGIT;
                 ONES = DISABLE_DIGIT;
