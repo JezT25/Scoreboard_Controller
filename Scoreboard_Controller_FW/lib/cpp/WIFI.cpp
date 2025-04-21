@@ -10,15 +10,15 @@ String IDATA::toJSON() {
 	
     int length = snprintf(
         buffer, sizeof(buffer),
-        "{\"SCORE_HOME\":%d,\"FOUL_HOME\":%d,\"TIMEOUT_HOME\":%d,"
-        "\"SCORE_AWAY\":%d,\"FOUL_AWAY\":%d,\"TIMEOUT_AWAY\":%d,"
-        "\"SHOTCLOCK\":%d,\"TIME_MINUTE\":%d,\"TIME_SECOND\":%d,"
-        "\"TIME_MS\":%d,\"TIME_SC_MS\":%d,\"CLOCK_HOUR\":%d,"
-        "\"CLOCK_MINUTE\":%d,\"GAME_PERIOD\":%d,\"GAME_POSESSION\":%d,"
-        "\"GAME_DOTS\":%d,\"TIMEOUT_FLAG\":%d,\"CLOCK_FLAG\":%d,"
-        "\"POWER_STATE\":%d}",
+        "{\"SH\":%d,\"FH\":%d,\"TH\":%d,"
+        "\"SA\":%d,\"FA\":%d,\"TA\":%d,"
+        "\"SC\":%d,\"TM\":%d,\"TS\":%d,"
+        "\"TMS\":%d,\"CH\":%d,"
+        "\"CM\":%d,\"GP\":%d,\"GS\":%d,"
+        "\"GD\":%d,\"TF\":%d,\"CF\":%d,"
+        "\"PS\":%d}",
         SCORE_HOME, FOUL_HOME, TIMEOUT_HOME, SCORE_AWAY, FOUL_AWAY, TIMEOUT_AWAY,
-        SHOTCLOCK, TIME_MINUTE, TIME_SECOND, TIME_MS, TIME_SC_MS, CLOCK_HOUR,
+        SHOTCLOCK, TIME_MINUTE, TIME_SECOND, TIME_MS, CLOCK_HOUR,
         CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS, TIMEOUT_FLAG, CLOCK_FLAG,
         ISystem.POWER_STATE
     );

@@ -5,41 +5,49 @@
 *******************************************/
 #include "../setup.hpp"
 
-void WIFI_class::Initialize() {
-    if (analogRead(A0) < 900) WiFi.begin(WIFI_SSID1, WIFI_PASSWORD1);
-    else WiFi.begin(WIFI_SSID2, WIFI_PASSWORD2);
+bool WIFI_class::nc = true;
 
-    while (WiFi.status() != WL_CONNECTED) {
+void WIFI_class::Initialize() {
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    delay(100);
+    esp_now_init();
+    esp_now_register_recv_cb(OnDataRecv);
+
+    while (nc) {
         Segment_1 = Segment_1 == 99 ? 0 : Segment_1 + 11;
         Segment_2 = Segment_1;
         Segment_3 = Segment_1;
-        delay(CONNECTING_INTERVAL);
+        delay(1000);
     }
-
-    http.begin(client, SERVER);
 }
 
+void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
+    if (len == 0) return;
 
-void WIFI_class::GetUpdate() {
-    // TODO: Add reconnecting algorithm!
-    if (WiFi.status() == WL_CONNECTED && http.GET() > 0) {
-        JsonDocument doc;
-        deserializeJson(doc, http.getString());
-        Power_Flag = doc["POWER_STATE"];
-        Colon_Flag = doc["GAME_DOTS"];
-        Timeout_Flag = doc["TIMEOUT_FLAG"];
-        if(doc["CLOCK_FLAG"] == LOW)
-        {
-            Segment_1 = (Colon_Flag == GAME_SECONDS) ? doc["TIME_SECOND"] : doc["TIME_MINUTE"];
-            Segment_2 = (Colon_Flag == GAME_SECONDS) ? doc["TIME_MS"].as<int>() * 10 : doc["TIME_SECOND"];
-            Segment_3 = doc["SHOTCLOCK"];
-        }
-        else
-        {
-            Segment_1 = doc["CLOCK_HOUR"];
-            Segment_2 = doc["CLOCK_MINUTE"];
-            Segment_3 = TWO_DIGIT_DASH;
-        }
+    char jsonStr[len + 1];
+
+    memcpy(jsonStr, data, len); 
+    jsonStr[len] = '\0';
+    JsonDocument doc;
+    deserializeJson(doc, jsonStr);
+
+    Power_Flag = doc["PS"];
+    Colon_Flag = doc["GD"];
+    Timeout_Flag = doc["TF"];
+
+    if (doc["CF"] == LOW)
+    {
+        Segment_1 = (Colon_Flag == GAME_SECONDS) ? doc["TS"] : doc["TM"];
+        Segment_2 = (Colon_Flag == GAME_SECONDS) ? doc["TMS"].as<int>() * 10 : doc["TS"];
+        Segment_3 = doc["SC"];
     }
-    delay(FETCH_INTERVAL);
+    else
+    {
+        Segment_1 = doc["CH"];
+        Segment_2 = doc["CM"];
+        Segment_3 = TWO_DIGIT_DASH;
+    }
+
+    nc = false;
 }

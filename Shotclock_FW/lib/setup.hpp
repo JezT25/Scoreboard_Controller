@@ -10,7 +10,7 @@
 /** LIBRARIES **/
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <espnow.h>
 #include <Ticker.h>
 
 #include "header/HARDWARE.h"

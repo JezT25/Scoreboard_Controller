@@ -9,17 +9,13 @@
 
 #include "../setup.hpp"
 
-#define SERVER		        "http://192.168.4.1:80/"
-#define CONNECTING_INTERVAL 1000
-
 class WIFI_class : private HARDWARE_class {
 	private:
-		HTTPClient	http;
-		WiFiClient	client;
+		static bool nc;
+		static void OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len);
 
     public:
 		void Initialize();
-        void GetUpdate();
 };
 
 #endif

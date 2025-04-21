@@ -1,36 +1,84 @@
 #include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+#include <espnow.h>
 
-#define WIFI_SSID1 "MyNodeMCU_AP"
-#define WIFI_SSID2 "MyNodeMCU_AP1"
-#define WIFI_PASSWORD1 "password123"
-#define WIFI_PASSWORD2 "password123"
+#define CHANNEL1 1
+#define CHANNEL2 6
+#define CHANNEL3 11
 
-ESP8266WebServer server(80);
-String data;
+int group;
 
-void setup() {
+// Group 1
+uint8_t broadcast1_1[] = {0xBC, 0xDD, 0xC2, 0x13, 0x30, 0x9F};
+uint8_t broadcast1_2[] = {0x2C, 0xF4, 0x32, 0x79, 0x15, 0x0F};
+uint8_t broadcast1_3[] = {0x40, 0x91, 0x51, 0x48, 0x27, 0xEA};
+
+// Group 2
+uint8_t broadcast2_1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcast2_2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcast2_3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+// Group All
+// Broadcast MAC address (sends to all ESP-NOW peers in range)
+uint8_t broadcastALL[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+void setup()
+{
 	Serial.begin(115200);
-	IPAddress localIP(192, 168, 4, 1);
-	IPAddress gateway(192, 168, 4, 1);
-	IPAddress subnet(255, 255, 255, 0);
-	WiFi.softAPdisconnect(true);
-	delay(500);
-	WiFi.softAPConfig(localIP, gateway, subnet);
-	if (analogRead(A0) < 900) {
-		WiFi.softAP(WIFI_SSID1, WIFI_PASSWORD1, 11, 1, 4, 15);
-	} else {
-		WiFi.softAP(WIFI_SSID2, WIFI_PASSWORD2, 11, 1, 4, 15);
+
+	// Set Wi-Fi mode to station and disconnect from any network
+	WiFi.mode(WIFI_STA);
+	WiFi.disconnect();
+	delay(100);
+
+	// Initialize ESP-NOW
+	esp_now_init();
+
+	// Register send callback
+	esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
+
+	if (analogRead(A0) < 450)
+	{
+		esp_now_add_peer(broadcast1_1, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
+		esp_now_add_peer(broadcast1_2, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
+		esp_now_add_peer(broadcast1_3, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
+		group = 0;
 	}
-	server.on("/", []() {
-		server.send(200, "text/plain", data);
-	});
-	server.begin();
+	else if (analogRead(A0) < 900)
+	{
+		esp_now_add_peer(broadcast2_1, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
+		esp_now_add_peer(broadcast2_2, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
+		esp_now_add_peer(broadcast2_3, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
+		group = 1;
+	}
+	else
+	{
+		esp_now_add_peer(broadcastALL, ESP_NOW_ROLE_SLAVE, CHANNEL3, NULL, 0);
+		group = 2;
+	}
 }
 
-void loop() {
-	server.handleClient();
-	if (Serial.available() > 0) {
-		data = Serial.readStringUntil('\n');
+void loop()
+{
+	if (Serial.available())
+	{
+		String data = Serial.readStringUntil('\n');
+		data.trim();
+
+		if(group == 0)
+		{
+			esp_now_send(broadcast1_1, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast1_2, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast1_3, (uint8_t *)data.c_str(), data.length());
+		}
+		else if(group == 1)
+		{
+			esp_now_send(broadcast2_1, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast2_2, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast2_3, (uint8_t *)data.c_str(), data.length());
+		}
+		else if(group == 2)
+		{
+			esp_now_send(broadcastALL, (uint8_t *)data.c_str(), data.length());
+		}
 	}
 }
