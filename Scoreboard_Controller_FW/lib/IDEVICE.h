@@ -77,7 +77,7 @@ class IDATA {
 
         volatile bool CLOCK_FLAG                =    LOW;
 
-        String toJSON();
+        const char* toJSON();
 };
 
 class ISYSTEM {

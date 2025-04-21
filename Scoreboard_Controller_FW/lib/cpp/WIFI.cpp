@@ -5,7 +5,7 @@
 *******************************************/
 #include "../setup.hpp"
 
-String IDATA::toJSON() {
+const char* IDATA::toJSON() {
     static char buffer[350]; // Allocate just enough buffer space
 	
     int length = snprintf(
@@ -27,7 +27,7 @@ String IDATA::toJSON() {
         return "{}"; // Fallback in case of error
     }
 
-    return String(buffer);
+    return buffer;
 }
 
 

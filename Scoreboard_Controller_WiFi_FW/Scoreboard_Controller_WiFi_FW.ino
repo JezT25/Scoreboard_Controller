@@ -61,24 +61,25 @@ void loop()
 {
 	if (Serial.available())
 	{
-		String data = Serial.readStringUntil('\n');
-		data.trim();
+		char data[250];
+		size_t len = Serial.readBytesUntil('\n', data, sizeof(data) - 1);
+		data[len] = '\0';
 
-		if(group == 0)
+		if (group == 0)
 		{
-			esp_now_send(broadcast1_1, (uint8_t *)data.c_str(), data.length());
-			esp_now_send(broadcast1_2, (uint8_t *)data.c_str(), data.length());
-			esp_now_send(broadcast1_3, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast1_1, (uint8_t *)data, len);
+			esp_now_send(broadcast1_2, (uint8_t *)data, len);
+			esp_now_send(broadcast1_3, (uint8_t *)data, len);
 		}
-		else if(group == 1)
+		else if (group == 1)
 		{
-			esp_now_send(broadcast2_1, (uint8_t *)data.c_str(), data.length());
-			esp_now_send(broadcast2_2, (uint8_t *)data.c_str(), data.length());
-			esp_now_send(broadcast2_3, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcast2_1, (uint8_t *)data, len);
+			esp_now_send(broadcast2_2, (uint8_t *)data, len);
+			esp_now_send(broadcast2_3, (uint8_t *)data, len);
 		}
-		else if(group == 2)
+		else if (group == 2)
 		{
-			esp_now_send(broadcastALL, (uint8_t *)data.c_str(), data.length());
+			esp_now_send(broadcastALL, (uint8_t *)data, len);
 		}
 	}
 }
