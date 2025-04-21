@@ -13,13 +13,26 @@ const char* IDATA::toJSON() {
         "{\"SH\":%d,\"FH\":%d,\"TH\":%d,"
         "\"SA\":%d,\"FA\":%d,\"TA\":%d,"
         "\"SC\":%d,\"TM\":%d,\"TS\":%d,"
-        "\"TMS\":%d,\"CH\":%d,"
-        "\"CM\":%d,\"GP\":%d,\"GS\":%d,"
-        "\"GD\":%d,\"TF\":%d,\"CF\":%d,"
-        "\"PS\":%d}",
-        SCORE_HOME, FOUL_HOME, TIMEOUT_HOME, SCORE_AWAY, FOUL_AWAY, TIMEOUT_AWAY,
-        SHOTCLOCK, TIME_MINUTE, TIME_SECOND, TIME_MS, CLOCK_HOUR,
-        CLOCK_MINUTE, GAME_PERIOD, GAME_POSESSION, GAME_DOTS, TIMEOUT_FLAG, CLOCK_FLAG,
+        "\"TMS\":%d,\"CH\":%d,\"CM\":%d,"
+        "\"GP\":%d,\"GS\":%d,\"GD\":%d,"
+        "\"TF\":%d,\"CF\":%d,\"PS\":%d}",
+        SCORE_HOME,
+        FOUL_HOME,
+        TIMEOUT_HOME,
+        SCORE_AWAY,
+        FOUL_AWAY,
+        TIMEOUT_AWAY,
+        SHOTCLOCK,
+        TIME_MINUTE,
+        TIME_SECOND,
+        TIME_MS,
+        CLOCK_HOUR,
+        CLOCK_MINUTE,
+        GAME_PERIOD,
+        GAME_POSESSION,
+        GAME_DOTS,
+        TIMEOUT_FLAG,
+        CLOCK_FLAG,
         ISystem.POWER_STATE
     );
 

@@ -27,15 +27,18 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
             {
                 IData.TIME_MINUTE = original_MIN;
                 IData.TIME_SECOND = original_SEC;
-                IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : 24;
-                ISystem.SC_TIME_MODE = TIME_RESET;
-                IData.TIMEOUT_FLAG = LOW;
+                resetShotclock();
+            }
+            else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIMEOUT_FLAG == HIGH)
+            {
+                ISystem.TIME_MODE = TIME_RUNNING;
+                resetShotclock();
             }
             else
             {
                 ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
+                ISystem.SC_TIME_MODE = TIME_PAUSE;
             }
-            ISystem.SC_TIME_MODE = TIME_PAUSE;
             Beep(BEEP_SHORT, TONE_HIGH);
         }
         TimeOnOFFPressed = false;
@@ -45,6 +48,28 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
         ISystem.SC_TIME_MODE = TIME_RUNNING;
         SCHeldWhileRunning = false;
     }
+}
+
+inline void BUTTON_class::resetShotclock()
+{
+    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
+    {
+        IData.SHOTCLOCK = IData.TIME_SECOND < 14 ? IData.SHOTCLOCK = TWO_DIGIT_DASH : 14;
+    }
+    else if(ISystem.SC_TIME_MODE != TIME_RUNNING)
+    {
+        IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
+    }
+    else if(IData.SHOTCLOCK == 24 && IData.TIME_SC_MS > 7)
+    {
+        IData.SHOTCLOCK = 14;
+    }
+    else if(IData.SHOTCLOCK != 24)
+    {
+        IData.SHOTCLOCK = 24;
+    }
+    IData.TIMEOUT_FLAG = LOW;
+    ISystem.SC_TIME_MODE = TIME_RESET;
 }
 
 void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
@@ -235,27 +260,10 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 if(ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0) return;
                 if(!holdButton)
                 {   
-                    if(IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
-                    {
-                        IData.SHOTCLOCK = IData.TIME_SECOND < 14 ? IData.SHOTCLOCK = TWO_DIGIT_DASH : 14;
-                    }
-                    else if(ISystem.SC_TIME_MODE != TIME_RUNNING)
-                    {
-                        IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
-                    }
-                    else if(IData.SHOTCLOCK == 24 && IData.TIME_SC_MS > 7)
-                    {
-                        IData.SHOTCLOCK = 14;
-                    }
-                    else if(IData.SHOTCLOCK != 24)
-                    {
-                        IData.SHOTCLOCK = 24;
-                    }
-                    IData.TIMEOUT_FLAG = LOW;
+                    resetShotclock();
                     Beep(BEEP_SHORT, TONE_HIGH);
                 }
                 if(ISystem.SC_TIME_MODE == TIME_RUNNING) SCHeldWhileRunning = true;
-                IData.TIME_SC_MS = 9;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 break;
             case SC_STARTSTOP:

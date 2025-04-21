@@ -32,6 +32,7 @@ class BUTTON_class : private HARDWARE_class {
         int lastButtonState[BUTTON_DEBOUNCE_COUNT]              = { HIGH };
         bool buttonWasPressed[BUTTON_DEBOUNCE_COUNT]            = { false };
 
+        inline void resetShotclock();
         void ButtonReleaseFunctions(int i);
         void ButtonFunctions(int i, bool holdButton);
 
