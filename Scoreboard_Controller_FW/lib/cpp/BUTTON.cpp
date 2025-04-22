@@ -27,11 +27,13 @@ void BUTTON_class::ButtonReleaseFunctions(int i) {
             {
                 IData.TIME_MINUTE = original_MIN;
                 IData.TIME_SECOND = original_SEC;
+                ISystem.SC_TIME_MODE = TIME_RESET;
                 resetShotclock();
             }
             else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIMEOUT_FLAG == HIGH)
             {
                 ISystem.TIME_MODE = TIME_RUNNING;
+                ISystem.SC_TIME_MODE = TIME_RESET;
                 resetShotclock();
             }
             else
@@ -69,7 +71,6 @@ inline void BUTTON_class::resetShotclock()
         IData.SHOTCLOCK = 24;
     }
     IData.TIMEOUT_FLAG = LOW;
-    ISystem.SC_TIME_MODE = TIME_RESET;
 }
 
 void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
@@ -243,7 +244,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false) {
                 }
                 break;
             case TIME_BUTTON:
-                if(ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST) return;
+                if(ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCKADJUST || ISystem.TIME_MODE == TIME_STOP) return;
                 if(!holdButton && !TimeOnOFFPressed) {
                     TimeOnOFFPressed = true;
                     lastTimeButtonTime = millis();

@@ -29,6 +29,7 @@
 #define TWO_DIGIT_OFF       100
 #define TWO_DIGIT_DASH      110
 
+#define TIME_STOP           0
 #define TIME_PAUSE          1
 #define TIME_RUNNING        2
 #define TIME_ADJUST         3

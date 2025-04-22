@@ -60,7 +60,7 @@ void TIME_class::MainDisplayFunction() {
                 {
                     IData.TIMEOUT_FLAG = HIGH;
                     IData.SHOTCLOCK = TWO_DIGIT_DASH;
-                    ISystem.TIME_MODE = TIME_PAUSE;
+                    ISystem.TIME_MODE = TIME_STOP;
                     ISystem.SC_TIME_MODE = TIME_RESET;
                     Beep(BEEP_EXX_LONG, TONE_HIGH);
                     Honk(BEEP_EXX_LONG);
