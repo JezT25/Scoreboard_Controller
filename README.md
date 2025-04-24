@@ -46,8 +46,8 @@ The project consists of multiple components that communicate with each other ove
 ### Components:
 
 - **Arduino Mega 2560:** Acts as the main controller for the scoreboard.
-- **NodeMCU 8266 (Wi-Fi Module):** Communicates with the Mega+WiFi board via UART.
-- **NodeMCU 8266 (Scoreboard/Shotclock):** Controls the shot clock functionality.
+- **NodeMCU 8266 x 1 (Wi-Fi Module):** Communicates with the Mega+WiFi board via UART.
+- **NodeMCU 8266 x 3 (Scoreboard/Shotclock):** Controls the shot clock functionality.
 - **Level Shifter:** Converts voltage between Arduino Mega (5V) and NodeMCU 8266 (3.3V) for UART communication.
 
 ### Required Components:
@@ -72,8 +72,9 @@ To set up the ESP-NOW communication protocol for the system, follow these steps 
 uint8_t broadcast1_1[] = {0xBC, 0xDD, 0xC2, 0x13, 0x30, 0x9F};
 uint8_t broadcast1_2[] = {0x2C, 0xF4, 0x32, 0x79, 0x15, 0x0F};
 uint8_t broadcast1_3[] = {0x40, 0x91, 0x51, 0x48, 0x27, 0xEA};
+uint8_t broadcast1_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 ```
-## 👯‍♀️ Setting Other Groups
+### 👯‍♀️ Setting Other Groups
 
 To set the second group (optional) fill in the rest of the MAC Addresses
 
@@ -81,14 +82,23 @@ To set the second group (optional) fill in the rest of the MAC Addresses
 uint8_t broadcast2_1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 uint8_t broadcast2_2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 uint8_t broadcast2_3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcast2_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 ```
 
 The device will have 3 modes.
-1. Group 1 Connect
-1. Group 2 Connect
-1. Connect to All
+- Group 1 Connect
+- Group 2 Connect
+- Connect to All
 
-> To know the MAC Address of device, refer to [💻 Programming Method](#programming-method).
+NOTE: This configuration is only for the Scoreboard_Controller_WiFi_FW and the ESP8266 it is programmed on. To change modes, set the voltage of A0 in the controller as follows:
+
+- 0V: Group 1
+- 1.5V: Group 2
+- 3.3V: Group 3
+
+The rest of the other NodeMCU devices will not use A0; only this one does.
+
+> To know the MAC Address of device, refer to [🛠 Programming Steps](#programming-steps).
 
 ---
 
@@ -107,27 +117,54 @@ Follow these steps to flash the correct firmware onto each board:
 <a id="programming-steps"></a>
 ## 🛠 Programming Steps
 
-### Step 1: Flash the Shotclock and Scoreboard
+### Step 1: Flash the Scoreboard
 
-1. **Upload Scoreboard Firmware:** Using Arduino IDE, upload the Scoreboard_FW firmware to the NodeMCU 8266 controlling the scoreboard.
-2. **Upload Shotclock Firmware:** Using Arduino IDE, upload the Shotclock_FW firmware to the NodeMCU 8266 controlling the shotclock.
+1. **For Setup Board 1:**  
+   - In the code, define **Board 1** by setting `#define BOARD 1`.
+
+2. **For Setup Board 2:**  
+   - In the code, define **Board 2** by setting `#define BOARD 2`.
+
+3. **Upload Firmware to the NodeMCU 8266:**  
+   - After setting the correct board definition, upload the firmware to the corresponding board.  
+   - For **Board 1**, upload the Scoreboard firmware 1 to the NodeMCU 8266 controlling the scoreboard.  
+   - For **Board 2**, upload the Scoreboard firmware 2 to the NodeMCU 8266 controlling the Scoreboard.  
+   - In Arduino IDE, click the **Upload** button to send the firmware to the selected board.
+
+```cpp
+/* 
+ * Choose the board you are using by setting the following:
+ *   - If you are using Board 1, set:  #define BOARD 1
+ *   - If you are using Board 2, set:  #define BOARD 2
+ * 
+ * Only **one** of the options should be set at a time. 
+ * Change the correct line based on your setup.
+ */
+
+#define BOARD 1
+```
+> Part of code to choose which fw version to upload to NODEMCU
 
 ![](/docs/macaddress.png)
 > ESP8266 MAC Address
 
-### Step 2: Programming the Mega+WiFi ESP8266
+### Step 2: Flash the Shotclock
+
+1. **Upload Shotclock Firmware:** Using Arduino IDE, upload the Shotclock_FW firmware to the NodeMCU 8266 controlling the shotclock.
+
+### Step 3: Programming the Mega+WiFi ESP8266
 
 1. **Set DIP Switch to 00001110:** Configures the ESP8266 on the Mega board to programming mode.
 2. **Flash the ESP8266:** Using Arduino IDE, upload blank Arduino code to the ESP8266 on the Mega to clear its memory.
 3. **Unplug Power:** Disconnect the power from the Mega+WiFi board.
 
-### Step 3: Flash the Arduino Mega 2560
+### Step 4: Flash the Arduino Mega 2560
 
 1. **Set DIP Switch to 00110000:** Configures the Mega board to load the scoreboard controller firmware.
 2. **Upload the Firmware:** Using Arduino IDE, upload the Scoreboard_Controller_FW firmware to the Mega 2560.
 3. **Unplug Power:** Disconnect the power from the Mega+WiFi board.
 
-### Step 4: Flash the Wi-Fi Module (NodeMCU 8266 for Mega+WiFi)
+### Step 5: Flash the Wi-Fi Module (NodeMCU 8266 for Mega+WiFi)
 
 1. **Configure the MAC Addresses:** Use the MAC addresses from the other modules and set them in the code before flashing.
 2. **Flash the Wi-Fi Firmware:** Using Arduino IDE, upload the Scoreboard_Controller_WiFi_FW firmware to the NodeMCU 8266 Wi-Fi module.

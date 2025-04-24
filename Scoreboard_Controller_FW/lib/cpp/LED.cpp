@@ -63,8 +63,8 @@ void LED_class::RefreshBuffer() {
             pTime_Second    = 100;
             pScore_Home     = 200;
             pScore_Away     = 200;
-            pFoul_Home      = 10;
-            pFoul_Away      = 10;
+            pFoul_Home      = 20;
+            pFoul_Away      = 20;
             pTimeout_Home   = 10;
             pTimeout_Away   = 10;
             pShotclock      = 0;

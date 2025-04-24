@@ -11,11 +11,13 @@ int group;
 uint8_t broadcast1_1[] = {0xBC, 0xDD, 0xC2, 0x13, 0x30, 0x9F};
 uint8_t broadcast1_2[] = {0x2C, 0xF4, 0x32, 0x79, 0x15, 0x0F};
 uint8_t broadcast1_3[] = {0x40, 0x91, 0x51, 0x48, 0x27, 0xEA};
+uint8_t broadcast1_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // Group 2
 uint8_t broadcast2_1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 uint8_t broadcast2_2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 uint8_t broadcast2_3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+uint8_t broadcast2_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // Group All
 // Broadcast MAC address (sends to all ESP-NOW peers in range)
@@ -41,6 +43,7 @@ void setup()
 		esp_now_add_peer(broadcast1_1, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
 		esp_now_add_peer(broadcast1_2, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
 		esp_now_add_peer(broadcast1_3, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
+		esp_now_add_peer(broadcast1_4, ESP_NOW_ROLE_SLAVE, CHANNEL1, NULL, 0);
 		group = 0;
 	}
 	else if (analogRead(A0) < 900)
@@ -48,6 +51,7 @@ void setup()
 		esp_now_add_peer(broadcast2_1, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
 		esp_now_add_peer(broadcast2_2, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
 		esp_now_add_peer(broadcast2_3, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
+		esp_now_add_peer(broadcast2_4, ESP_NOW_ROLE_SLAVE, CHANNEL2, NULL, 0);
 		group = 1;
 	}
 	else
@@ -70,12 +74,14 @@ void loop()
 			esp_now_send(broadcast1_1, (uint8_t *)data, len);
 			esp_now_send(broadcast1_2, (uint8_t *)data, len);
 			esp_now_send(broadcast1_3, (uint8_t *)data, len);
+			esp_now_send(broadcast1_4, (uint8_t *)data, len);
 		}
 		else if (group == 1)
 		{
 			esp_now_send(broadcast2_1, (uint8_t *)data, len);
 			esp_now_send(broadcast2_2, (uint8_t *)data, len);
 			esp_now_send(broadcast2_3, (uint8_t *)data, len);
+			esp_now_send(broadcast2_4, (uint8_t *)data, len);
 		}
 		else if (group == 2)
 		{

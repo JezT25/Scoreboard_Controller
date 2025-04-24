@@ -26,6 +26,7 @@
 
 #define DIGIT_OFF           10
 #define DIGIT_DASH          11
+#define DIGIT_P             12
 #define TWO_DIGIT_OFF       100
 #define TWO_DIGIT_DASH      110
 

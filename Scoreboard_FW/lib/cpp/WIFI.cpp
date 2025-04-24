@@ -15,7 +15,7 @@ void WIFI_class::Initialize() {
     esp_now_register_recv_cb(OnDataRecv);
 
     while (coldboot) {
-        Period = (Period == 8) ? 4 : (Period == 4) ? 2 : (Period == 2) ? 1 : 8;
+        Period = (Period == FIRST_PERIOD) ? SECOND_PERIOD : (Period == SECOND_PERIOD) ? THIRD_PERIOD : (Period == THIRD_PERIOD) ? FOURTH_PERIOD : (Period == FOURTH_PERIOD) ? FIFTH_PERIOD : (Period == FIFTH_PERIOD) ? NO_PERIOD : FIRST_PERIOD;
         Time_Minute = Time_Minute == 99 ? 0 : Time_Minute + 11;
         Time_Seconds = Time_Minute;
         Home_Score = Time_Minute;
