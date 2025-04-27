@@ -6,7 +6,7 @@
 #include "../setup.hpp"
 
 void HARDWARE_class::Honk(int duration) {
-    digitalWrite(HORN, LOW);
+    digitalWrite(HORN, HIGH);
     IHardware.honkTime = duration;
     IHardware.lastHonkTime = millis();
 }
@@ -24,12 +24,13 @@ void HARDWARE_class::DisableNoise() {
     }
     if ((millis() - IHardware.lastHonkTime) >= IHardware.honkTime)
     {
-        digitalWrite(HORN, HIGH);
+        digitalWrite(HORN, LOW);
     }
 }
 
 void HARDWARE_class::BUZZER_Initialize() {
     pinMode(BUZZER, OUTPUT);
+    pinMode(HORN, OUTPUT);
 }
 
 void HARDWARE_class::BUTTON_Initialize() {

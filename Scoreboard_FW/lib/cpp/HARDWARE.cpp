@@ -134,7 +134,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 digitalWrite(D4, LOW);
                 digitalWrite(D5, LOW);
                 digitalWrite(D6, LOW);
-                digitalWrite(D7, Period == FIFTH_PERIOD);
+                digitalWrite(D7, LOW);
             }
 
             CurrentSegment = CurrentSegment == PERIOD_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
@@ -143,6 +143,8 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
             {
                 if(pPosession == Posession) Posession = NO_POSESSION;
                 else if(pPosession != Posession) pPosession = 10;
+                if(pPeriod == Period) Period = NO_PERIOD;
+                else if(pPeriod != Period) pPeriod = 10;
                 if(pHome_Score != Home_Score) pHome_Score = 200;
                 if(pAway_Score != Away_Score) pAway_Score = 200;
                 if(pHome_Fouls != Home_Fouls) pHome_Fouls = 20;
@@ -157,7 +159,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
             digitalWrite(D5, (Clock_Flag == HIGH && pAway_Score == Away_Score) ? LOW : Away_Score > 99);
             digitalWrite(D6, (Clock_Flag == HIGH && pHome_Fouls == Home_Fouls) ? LOW : Home_Fouls == DIGIT_P);
             digitalWrite(D7, (Clock_Flag == HIGH && pAway_Fouls == Away_Fouls) ? LOW : Away_Fouls == DIGIT_P);
-            digitalWrite(D8, LOW);
+            digitalWrite(D8, Period == FIFTH_PERIOD);
             digitalWrite(D9, LOW);
             digitalWrite(D10, LOW);
         #endif
