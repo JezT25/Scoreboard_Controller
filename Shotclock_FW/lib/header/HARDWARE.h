@@ -9,7 +9,7 @@
 
 #include "../setup.hpp"
 
-#define LED_FREQ			0.0025
+#define LED_FREQ			1
 
 #define DISABLE_DIGIT		15
 
@@ -33,7 +33,6 @@ class HARDWARE_class {
     private:
         volatile int CurrentSegment  = TENS_SEGMENT;
         Ticker timer;
-        void IRAM_ATTR DisplayLED();
 
     protected:
         static volatile int Segment_1;
@@ -45,6 +44,8 @@ class HARDWARE_class {
 
     public:
         void Initialize();
+        void DisplayLED();
+
 };
 
 #endif
