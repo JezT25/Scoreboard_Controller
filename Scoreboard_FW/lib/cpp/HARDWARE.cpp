@@ -29,24 +29,8 @@ volatile bool HARDWARE_class::Clock_Flag    = LOW;
 
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
     #if BOARD == 1
-        // Clear
-        digitalWrite(D0, HIGH);
-        digitalWrite(D1, HIGH);
-        digitalWrite(D2, HIGH);
-        digitalWrite(D3, HIGH);
-        digitalWrite(D4, HIGH);
-        digitalWrite(D5, HIGH);
-        digitalWrite(D6, HIGH);
-        digitalWrite(D7, HIGH);
-        GPOC = (1 << D8) | (1 << D9) | (1 << D10);
-
         if(Power_Flag == POWER_ON)
         {
-            // Set Digits
-            digitalWrite(D8, (CurrentSegment & 1));
-            digitalWrite(D9, (CurrentSegment & 2) >> 1);
-            digitalWrite(D10, (CurrentSegment & 4) >> 2);
-
             if(CurrentSegment >= TENS_SEGMENT && CurrentSegment <= A_FOULRTO_SEGMENT)
             {
                 int TENS, ONES;
@@ -90,6 +74,23 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                         break;
                 }
 
+                // Clear (We dont clear TENS since Period Data is already blank for TENS and doing so will cause ghosting)
+                if (CurrentSegment != TENS_SEGMENT)
+                {
+                    digitalWrite(D0, HIGH);
+                    digitalWrite(D1, HIGH);
+                    digitalWrite(D2, HIGH);
+                    digitalWrite(D3, HIGH);
+                    digitalWrite(D4, HIGH);
+                    digitalWrite(D5, HIGH);
+                    digitalWrite(D6, HIGH);
+                    digitalWrite(D7, HIGH);
+                }
+
+                // Set Digits
+                digitalWrite(D8, (CurrentSegment & 1));
+                digitalWrite(D9, (CurrentSegment & 2) >> 1);
+                digitalWrite(D10, (CurrentSegment & 4) >> 2);
                 digitalWrite(D0, (TENS & 1));
                 digitalWrite(D1, (TENS & 2) >> 1);
                 digitalWrite(D2, (TENS & 4) >> 2);
@@ -104,21 +105,41 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 if(Clock_Flag == HIGH && pPeriod == Period) Period = NO_PERIOD;
                 else if(Clock_Flag == HIGH && pPeriod != Period) pPeriod = 10;
 
-                int p = (Period == NO_PERIOD)   ? 15 :
-                (Period == FIRST_PERIOD)        ? 1  :
-                (Period == SECOND_PERIOD)       ? 2  :
-                (Period == THIRD_PERIOD)        ? 3  :
-                (Period == FOURTH_PERIOD)       ? 4  :
-                /* FIFTH_PERIOD */                1;
+                int p = (Period == NO_PERIOD)           ? 15 :
+                        (Period == FIRST_PERIOD)        ? 1  :
+                        (Period == SECOND_PERIOD)       ? 2  :
+                        (Period == THIRD_PERIOD)        ? 3  :
+                        (Period == FOURTH_PERIOD)       ? 4  :
+                        /* FIFTH_PERIOD */                1;
 
                 digitalWrite(D0, (p & 1));
                 digitalWrite(D1, (p & 2) >> 1);
+                digitalWrite(D2, HIGH);
+                digitalWrite(D3, HIGH);
                 digitalWrite(D4, (p & 4) >> 2);
                 digitalWrite(D5, (p & 8) >> 3);
+                digitalWrite(D6, HIGH);
+                digitalWrite(D7, HIGH);
+                digitalWrite(D8, (CurrentSegment & 1));
+                digitalWrite(D9, (CurrentSegment & 2) >> 1);
+                digitalWrite(D10, (CurrentSegment & 4) >> 2);
             }
-
-            CurrentSegment = CurrentSegment == PERIOD_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
         }
+        else
+        {
+            digitalWrite(D0, HIGH);
+            digitalWrite(D1, HIGH);
+            digitalWrite(D2, HIGH);
+            digitalWrite(D3, HIGH);
+            digitalWrite(D4, HIGH);
+            digitalWrite(D5, HIGH);
+            digitalWrite(D6, HIGH);
+            digitalWrite(D7, HIGH);
+            digitalWrite(D8, (CurrentSegment & 1));
+            digitalWrite(D9, (CurrentSegment & 2) >> 1);
+            digitalWrite(D10, (CurrentSegment & 4) >> 2);
+        }
+        CurrentSegment = CurrentSegment == PERIOD_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
     #elif BOARD == 2
         if(Power_Flag == POWER_ON)
         {

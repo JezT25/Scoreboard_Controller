@@ -15,7 +15,6 @@ class LED_class : private HARDWARE_class {
     private:
         bool coldBoot = true;
         volatile unsigned int pTimeClock;
-        volatile unsigned int currentSegment;
         volatile unsigned int pScore_Home;
         volatile unsigned int pFoul_Home;
         volatile unsigned int pTimeout_Home;
@@ -30,6 +29,7 @@ class LED_class : private HARDWARE_class {
         volatile unsigned int pPeriod;
         volatile unsigned int pPosession;
         volatile unsigned int pDots;
+        volatile unsigned int currentSegment;
         volatile unsigned long lastBlinkTime;
         volatile bool BlinkState;
         volatile int Segment_Buffer[4][4][7];
