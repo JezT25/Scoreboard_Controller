@@ -94,7 +94,7 @@ NOTE: This configuration is only for the Scoreboard_Controller_WiFi_FW and the E
 
 - 0V: Group 1
 - 1.5V: Group 2
-- 3.3V: Group 3
+- 3.3V: Connect to All
 
 The rest of the other NodeMCU devices will not use A0; only this one does.
 

@@ -28,36 +28,20 @@ volatile bool HARDWARE_class::Power_Flag    = POWER_ON;
 volatile bool HARDWARE_class::Clock_Flag    = LOW;
 
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
-    if(Power_Flag == POWER_OFF)
-    {
-        digitalWrite(D0, LOW);
-        digitalWrite(D1, LOW);
-        digitalWrite(D2, LOW);
-        digitalWrite(D3, LOW);
-        digitalWrite(D4, LOW);
-        digitalWrite(D5, LOW);
-        digitalWrite(D6, LOW);
-        digitalWrite(D7, LOW);
-        digitalWrite(D8, LOW);
-        digitalWrite(D9, LOW);
-        digitalWrite(D10, LOW);
-    }
-    else
-    {
-        #if BOARD == 1
-            // Clear
-            digitalWrite(D0, HIGH);
-            digitalWrite(D1, HIGH);
-            digitalWrite(D2, HIGH);
-            digitalWrite(D3, HIGH);
-            digitalWrite(D4, HIGH);
-            digitalWrite(D5, HIGH);
-            digitalWrite(D6, HIGH);
-            digitalWrite(D7, HIGH);
-            digitalWrite(D8, LOW);
-            digitalWrite(D9, LOW);
-            digitalWrite(D10, LOW);
+    #if BOARD == 1
+        // Clear
+        digitalWrite(D0, HIGH);
+        digitalWrite(D1, HIGH);
+        digitalWrite(D2, HIGH);
+        digitalWrite(D3, HIGH);
+        digitalWrite(D4, HIGH);
+        digitalWrite(D5, HIGH);
+        digitalWrite(D6, HIGH);
+        digitalWrite(D7, HIGH);
+        GPOC = (1 << D8) | (1 << D9) | (1 << D10);
 
+        if(Power_Flag == POWER_ON)
+        {
             // Set Digits
             digitalWrite(D8, (CurrentSegment & 1));
             digitalWrite(D9, (CurrentSegment & 2) >> 1);
@@ -129,16 +113,15 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
 
                 digitalWrite(D0, (p & 1));
                 digitalWrite(D1, (p & 2) >> 1);
-                digitalWrite(D2, (p & 4) >> 2);
-                digitalWrite(D3, (p & 8) >> 3);
-                digitalWrite(D4, LOW);
-                digitalWrite(D5, LOW);
-                digitalWrite(D6, LOW);
-                digitalWrite(D7, LOW);
+                digitalWrite(D4, (p & 4) >> 2);
+                digitalWrite(D5, (p & 8) >> 3);
             }
 
             CurrentSegment = CurrentSegment == PERIOD_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
-        #elif BOARD == 2
+        }
+    #elif BOARD == 2
+        if(Power_Flag == POWER_ON)
+        {
             if(Clock_Flag == HIGH)
             {
                 if(pPosession == Posession) Posession = NO_POSESSION;
@@ -162,8 +145,23 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
             digitalWrite(D8, Period == FIFTH_PERIOD);
             digitalWrite(D9, LOW);
             digitalWrite(D10, LOW);
-        #endif
-    }
+        }
+        else
+        {
+            // Clear
+            digitalWrite(D0, LOW);
+            digitalWrite(D1, LOW);
+            digitalWrite(D2, LOW);
+            digitalWrite(D3, LOW);
+            digitalWrite(D4, LOW);
+            digitalWrite(D5, LOW);
+            digitalWrite(D6, LOW);
+            digitalWrite(D7, LOW);
+            digitalWrite(D8, LOW);
+            digitalWrite(D9, LOW);
+            digitalWrite(D10, LOW);
+        }
+    #endif
 }
 
 void HARDWARE_class::Initialize() {

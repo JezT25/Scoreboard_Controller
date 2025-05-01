@@ -22,9 +22,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
     digitalWrite(D5, HIGH);
     digitalWrite(D6, HIGH);
     digitalWrite(D7, HIGH);
-    digitalWrite(D8, LOW);
-    digitalWrite(D9, LOW);
-    digitalWrite(D10, LOW);
+    GPOC = (1 << D8) | (1 << D9) | (1 << D10);
 
     if(Power_Flag == POWER_ON)
     {
@@ -46,9 +44,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
             }
     
             // Set Digits
-            digitalWrite(D8, (CurrentSegment == TENS_SEGMENT || CurrentSegment == SC_SEGMENT) ? HIGH : LOW);
-            digitalWrite(D9, (CurrentSegment == ONES_SEGMENT || CurrentSegment == SC_SEGMENT) ? HIGH : LOW);
-            digitalWrite(D10, LOW);
+            GPOS = ((CurrentSegment == TENS_SEGMENT || CurrentSegment == SC_SEGMENT) ? (1 << D8) : 0) | ((CurrentSegment == ONES_SEGMENT || CurrentSegment == SC_SEGMENT) ? (1 << D9) : 0);
             digitalWrite(D0, (TENS & 1));
             digitalWrite(D1, (TENS & 2) >> 1);
             digitalWrite(D2, (TENS & 4) >> 2);
@@ -60,21 +56,15 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         }
         else if (Colon_Flag == GAME_MINUTE && CurrentSegment == UPCOL_SEGMENT)
         {
-            digitalWrite(D8, LOW);
-            digitalWrite(D9, LOW);
-            digitalWrite(D10, HIGH);
+            GPOS = (1 << D10);
         }
         else if (Colon_Flag >= GAME_SECONDS && CurrentSegment == DWNCOL_SEGMENT)
         {
-            digitalWrite(D8, HIGH);
-            digitalWrite(D9, LOW);
-            digitalWrite(D10, HIGH);
+            GPOS = (1 << D8) | (1 << D10);
         }
         else if (Timeout_Flag == HIGH && CurrentSegment == TOUT_SEGMENT)
         {
-            digitalWrite(D8, HIGH);
-            digitalWrite(D9, HIGH);
-            digitalWrite(D10, HIGH);
+            GPOS = (1 << D8) | (1 << D9) | (1 << D10);
         }
 
         CurrentSegment = CurrentSegment == TOUT_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
