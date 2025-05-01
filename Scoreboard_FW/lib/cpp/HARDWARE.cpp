@@ -105,12 +105,12 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 if(Clock_Flag == HIGH && pPeriod == Period) Period = NO_PERIOD;
                 else if(Clock_Flag == HIGH && pPeriod != Period) pPeriod = 10;
 
-                int p = (Period == NO_PERIOD)           ? 15 :
-                        (Period == FIRST_PERIOD)        ? 1  :
-                        (Period == SECOND_PERIOD)       ? 2  :
-                        (Period == THIRD_PERIOD)        ? 3  :
-                        (Period == FOURTH_PERIOD)       ? 4  :
-                        /* FIFTH_PERIOD */                1;
+                int p = (Period == NO_PERIOD)       ? 15 :
+                        (Period == FIRST_PERIOD)    ? 1  :
+                        (Period == SECOND_PERIOD)   ? 2  :
+                        (Period == THIRD_PERIOD)    ? 3  :
+                        (Period == FOURTH_PERIOD)   ? 4  :
+                        /* FIFTH_PERIOD */            1;
 
                 digitalWrite(D0, (p & 1));
                 digitalWrite(D1, (p & 2) >> 1);

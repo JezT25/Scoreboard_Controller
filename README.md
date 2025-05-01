@@ -1,6 +1,6 @@
-# Scoreboard Controller System 🏀
+<h1 align="center">Scoreboard Controller System 🏀</h1>
 
-This repository provides the code and documentation for controlling a scoreboard and shot clock system using multiple microcontrollers, including Arduino Mega 2560, NodeMCU 8266, and ESP8266-based boards. The system allows for real-time control and synchronization of the scoreboard and shot clock via wireless communication.
+<p align="justify">This repository provides the code and documentation for controlling a scoreboard and shotclock system using multiple microcontrollers, including Arduino Mega 2560, NodeMCU 8266, and ESP8266-based boards. The system allows for real-time control and synchronization of the scoreboard and shotclock via wireless communication.</p>
 
 ---
 
@@ -47,7 +47,7 @@ The project consists of multiple components that communicate with each other ove
 
 - **Arduino Mega 2560:** Acts as the main controller for the scoreboard.
 - **NodeMCU 8266 x 1 (Wi-Fi Module):** Communicates with the Mega+WiFi board via UART.
-- **NodeMCU 8266 x 3 (Scoreboard/Shotclock):** Controls the shot clock functionality.
+- **NodeMCU 8266 x 3 (Scoreboard/Shotclock):** Controls the shotclock functionality.
 - **Level Shifter:** Converts voltage between Arduino Mega (5V) and NodeMCU 8266 (3.3V) for UART communication.
 
 ### Required Components:
@@ -223,9 +223,9 @@ Refer to the DIP switch diagram for further details.
 
 - **Solution:** Check the DIP switch settings and ensure that the correct board is selected in the Arduino IDE. Verify that the correct port is being used for uploading.
 
-### Issue: No Wi-Fi Connection
+### Issue: No Connection
 
-- **Solution:** Double-check the Wi-Fi credentials in the Scoreboard_Controller_WiFi_FW. Ensure the NodeMCU 8266 is correctly configured.
+- **Solution:** Double-check the MAC Addresses in the Scoreboard_Controller_WiFi_FW. Ensure the NodeMCU 8266 is correctly configured.
 
 ---
 
