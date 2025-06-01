@@ -67,7 +67,6 @@ void HARDWARE_class::LED_Initialize() {
     {
         pinMode(LED_Dots[i], OUTPUT);
     }
-    pinMode(POWER_SW, INPUT);
 
     // Timer5 overflow interrupt ~ 192Hz / 48Hz per section
     TCCR5A = 0;

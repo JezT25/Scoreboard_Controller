@@ -65,7 +65,7 @@
 #define TIME_BUTTON     35
 #define SC_PRESET       37
 #define SC_STARTSTOP    41
-#define POWER_SW        13
+#define POWER_SW        3
 
 #define BEEP_SHORT      50
 #define BEEP_MED        100
