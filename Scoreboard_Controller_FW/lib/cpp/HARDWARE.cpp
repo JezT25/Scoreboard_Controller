@@ -116,6 +116,14 @@ void HARDWARE_class::CheckForPower()
         // digitalWrite(LED_Section[2], HIGH);
         // digitalWrite(LED_Section[3], HIGH);
 
+        // Ensure Updates
+        for (int i = 0; i < 10; i++)
+        {
+            Serial3.println(IData.toJSON());
+            delay(15);
+        }
+
+        // Sleep!
         attachInterrupt(digitalPinToInterrupt(POWER_SW), []() {}, LOW);
         LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
