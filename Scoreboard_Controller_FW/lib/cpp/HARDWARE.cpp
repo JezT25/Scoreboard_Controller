@@ -1,23 +1,26 @@
 /*******************************************
-	DEVELOPED BY JEZREEL TAN - DEC 2023
-	jztan25@gmail.com
-	(0917) 443 2532
+    DEVELOPED BY JEZREEL TAN - DEC 2023
+    jztan25@gmail.com
+    (0917) 443 2532
 *******************************************/
 #include "../setup.hpp"
 
-void HARDWARE_class::Honk(int duration) {
+void HARDWARE_class::Honk(int duration)
+{
     digitalWrite(HORN, HIGH);
     IHardware.honkTime = duration;
     IHardware.lastHonkTime = millis();
 }
 
-void HARDWARE_class::Beep(int duration, int frequency) {
+void HARDWARE_class::Beep(int duration, int frequency)
+{
     tone(BUZZER, frequency);
     IHardware.beepTime = duration;
     IHardware.lastBeepTime = millis();
 }
 
-void HARDWARE_class::DisableNoise() {
+void HARDWARE_class::DisableNoise()
+{
     if ((millis() - IHardware.lastBeepTime) >= IHardware.beepTime)
     {
         noTone(BUZZER);
@@ -28,19 +31,22 @@ void HARDWARE_class::DisableNoise() {
     }
 }
 
-void HARDWARE_class::BUZZER_Initialize() {
+void HARDWARE_class::BUZZER_Initialize()
+{
     pinMode(BUZZER, OUTPUT);
     pinMode(HORN, OUTPUT);
 }
 
-void HARDWARE_class::BUTTON_Initialize() {
+void HARDWARE_class::BUTTON_Initialize()
+{
     for (int i = 0; i < BUTTON_COUNT; i++)
     {
         pinMode(buttonPins[i], INPUT_PULLUP);
     }
 }
 
-void HARDWARE_class::TIME_Initialize() {
+void HARDWARE_class::TIME_Initialize()
+{
     // Timer4 overflow interrupt ~ 10Hz
     TCCR4A = 0;
     TCCR4B = 0;
@@ -50,10 +56,11 @@ void HARDWARE_class::TIME_Initialize() {
     TIMSK4 |= (1 << OCIE4A);
 
     // Initialize RTC
-	rtc.begin();
+    rtc.begin();
 }
 
-void HARDWARE_class::LED_Initialize() {
+void HARDWARE_class::LED_Initialize()
+{
     // Set as OUTPUT
     for (int i = 0; i < 4; i++)
     {
@@ -77,12 +84,14 @@ void HARDWARE_class::LED_Initialize() {
     TIMSK5 |= (1 << OCIE5A);
 }
 
-void HARDWARE_class::WIFI_Initialize() {
+void HARDWARE_class::WIFI_Initialize()
+{
     // Serial Communication with ESP8266 through Serial3
     Serial3.begin(SERIAL3_BAUD);
 }
 
-void HARDWARE_class::CheckForPower() {
+void HARDWARE_class::CheckForPower()
+{
     if (digitalRead(POWER_SW) == HIGH && ISystem.POWER_STATE != POWER_OFF)
     {
         ISystem.POWER_STATE = POWER_OFF;
@@ -102,12 +111,12 @@ void HARDWARE_class::CheckForPower() {
         {
             digitalWrite(LED_Section[i], LOW);
         }
-        
+
         // digitalWrite(LED_Dots[1], HIGH);
         // digitalWrite(LED_Section[2], HIGH);
         // digitalWrite(LED_Section[3], HIGH);
 
-        attachInterrupt(digitalPinToInterrupt(POWER_SW), [](){}, LOW);
+        attachInterrupt(digitalPinToInterrupt(POWER_SW), []() {}, LOW);
         LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     }
     else if (digitalRead(POWER_SW) == LOW && ISystem.POWER_STATE != POWER_ON)
@@ -117,7 +126,8 @@ void HARDWARE_class::CheckForPower() {
     }
 }
 
-void HARDWARE_class::Initialize() {
+void HARDWARE_class::Initialize()
+{
     noInterrupts();
     BUZZER_Initialize();
     BUTTON_Initialize();
@@ -127,7 +137,8 @@ void HARDWARE_class::Initialize() {
     interrupts();
 }
 
-void HARDWARE_class::Listener() {
+void HARDWARE_class::Listener()
+{
     CheckForPower();
     DisableNoise();
 }

@@ -1,13 +1,14 @@
 /*******************************************
-	DEVELOPED BY JEZREEL TAN - DEC 2023
-	jztan25@gmail.com
-	(0917) 443 2532
+    DEVELOPED BY JEZREEL TAN - DEC 2023
+    jztan25@gmail.com
+    (0917) 443 2532
 *******************************************/
 #include "../setup.hpp"
 
-const char* IDATA::toJSON() {
+const char *IDATA::toJSON()
+{
     static char buffer[350]; // Allocate just enough buffer space
-	
+
     int length = snprintf(
         buffer, sizeof(buffer),
         "{\"SH\":%d,\"FH\":%d,\"TH\":%d,"
@@ -33,22 +34,24 @@ const char* IDATA::toJSON() {
         GAME_DOTS,
         TIMEOUT_FLAG,
         CLOCK_FLAG,
-        ISystem.POWER_STATE
-    );
+        ISystem.POWER_STATE);
 
-    if (length < 0 || length >= sizeof(buffer)) {
+    if (length < 0 || length >= sizeof(buffer))
+    {
         return "{}"; // Fallback in case of error
     }
 
     return buffer;
 }
 
+void WIFI_class::SendUpdate()
+{
+    if (ISystem.POWER_STATE != POWER_ON)
+        return;
 
-void WIFI_class::SendUpdate() {
-    if(ISystem.POWER_STATE != POWER_ON) return;
-
-	if(millis() - lastWiFiUpdate >= WIFI_INTERVAL) {
-		lastWiFiUpdate = millis();
-		Serial3.println(IData.toJSON());
-	}
+    if (millis() - lastWiFiUpdate >= WIFI_INTERVAL)
+    {
+        lastWiFiUpdate = millis();
+        Serial3.println(IData.toJSON());
+    }
 }
