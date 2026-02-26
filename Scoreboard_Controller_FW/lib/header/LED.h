@@ -29,6 +29,10 @@ class LED_class : private HARDWARE_class {
         volatile unsigned int pPeriod;
         volatile unsigned int pPosession;
         volatile unsigned int pDots;
+        volatile unsigned int savedPeriod;
+        volatile unsigned int savedPosession;
+        volatile unsigned int savedDots;
+        volatile bool clockModeSaved;
         volatile unsigned int currentSegment;
         volatile unsigned long lastBlinkTime;
         volatile bool BlinkState;

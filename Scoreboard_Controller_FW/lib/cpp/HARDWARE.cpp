@@ -50,7 +50,7 @@ void HARDWARE_class::TIME_Initialize()
     // Timer4 overflow interrupt ~ 10Hz
     TCCR4A = 0;
     TCCR4B = 0;
-    OCR4A = 6249;
+    OCR4A = 6945;
     TCCR4B |= (1 << WGM42);
     TCCR4B |= (1 << CS42) | (0 << CS41) | (0 << CS40);
     TIMSK4 |= (1 << OCIE4A);

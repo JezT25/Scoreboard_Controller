@@ -31,6 +31,7 @@ void LED_class::ClearBuffer()
         UpdateBuffer(0, i);
     }
     coldBoot = false;
+    clockModeSaved = false;
 }
 
 void LED_class::RefreshBuffer()
@@ -38,12 +39,27 @@ void LED_class::RefreshBuffer()
     // From dead initialization never to be rerun again
     coldBoot ? ClearBuffer() : static_cast<void>(0);
 
-    // Clear screen settings when switching from time to clock
+    // Clear screen settings when switching between time/clock modes
     if ((ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_PAUSE) && pTimeClock != ISystem.TIME_MODE)
     {
-        pTimeClock = ISystem.TIME_MODE;
+        // If we are EXITING clock mode, restore saved display state first (no matter what mode we enter next)
         if (pTimeClock == TIME_CLOCK)
         {
+            if (clockModeSaved)
+            {
+                IData.GAME_PERIOD = savedPeriod;
+                IData.GAME_POSESSION = savedPosession;
+                IData.GAME_DOTS = savedDots;
+                clockModeSaved = false;
+            }
+        }
+
+        // Update cached mode
+        pTimeClock = ISystem.TIME_MODE;
+
+        if (pTimeClock == TIME_CLOCK)
+        {
+            // Clear main displays for clock screen
             pTime_Minute = 100;
             pTime_Second = 100;
             UpdateBuffer(10, SCORE_HOME_TENS);
@@ -56,6 +72,17 @@ void LED_class::RefreshBuffer()
             UpdateBuffer(10, TIMEOUT_AWAY);
             UpdateBuffer(10, SHOTCLOCK_TENS);
             UpdateBuffer(10, SHOTCLOCK_ONES);
+
+            // Save current display state so we can restore it when leaving clock mode
+            if (!clockModeSaved)
+            {
+                savedPeriod = IData.GAME_PERIOD;
+                savedPosession = IData.GAME_POSESSION;
+                savedDots = IData.GAME_DOTS;
+                clockModeSaved = true;
+            }
+
+            // Hide period/possession while in clock mode (display only)
             IData.GAME_PERIOD = NO_PERIOD;
             IData.GAME_POSESSION = NO_POSESSION;
             IData.GAME_DOTS = GAME_MINUTE;
@@ -63,6 +90,7 @@ void LED_class::RefreshBuffer()
         }
         else if (pTimeClock == TIME_PAUSE)
         {
+            // Force refresh of all fields when returning to pause screen
             pTime_Minute = 100;
             pTime_Second = 100;
             pScore_Home = 200;
@@ -72,8 +100,10 @@ void LED_class::RefreshBuffer()
             pTimeout_Home = 10;
             pTimeout_Away = 10;
             pShotclock = 0;
+
             IData.CLOCK_FLAG = LOW;
         }
+
         BlinkState = false;
     }
 

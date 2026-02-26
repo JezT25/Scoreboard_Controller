@@ -34,6 +34,16 @@ void BUTTON_class::ButtonReleaseFunctions(int i)
                 IData.TIME_SECOND = original_SEC;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 resetShotclock();
+
+                if (IData.PERIOD_END_FLAG == HIGH)
+                {
+                    IData.GAME_PERIOD = (IData.GAME_PERIOD == FIRST_PERIOD) ? SECOND_PERIOD : (IData.GAME_PERIOD == SECOND_PERIOD) ? THIRD_PERIOD
+                                                                                          : (IData.GAME_PERIOD == THIRD_PERIOD)    ? FOURTH_PERIOD
+                                                                                          : (IData.GAME_PERIOD == FOURTH_PERIOD)   ? FIFTH_PERIOD
+                                                                                          : (IData.GAME_PERIOD == FIFTH_PERIOD)    ? NO_PERIOD
+                                                                                                                                   : FIRST_PERIOD;
+                    IData.PERIOD_END_FLAG = LOW;
+                }
             }
             else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIMEOUT_FLAG == HIGH)
             {

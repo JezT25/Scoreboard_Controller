@@ -64,9 +64,9 @@ class IDATA {
         volatile unsigned int TIME_MS           =    0;
 
         volatile unsigned int TIME_SC_MS        =    0;
-        
+
         volatile unsigned int CLOCK_HOUR        =    0;
-        
+
         volatile unsigned int CLOCK_MINUTE      =    0;
 
         volatile unsigned int GAME_PERIOD       =    FIRST_PERIOD;
@@ -78,6 +78,8 @@ class IDATA {
         volatile bool TIMEOUT_FLAG              =    LOW;
 
         volatile bool CLOCK_FLAG                =    LOW;
+
+        volatile bool PERIOD_END_FLAG           =    LOW;
 
         const char* toJSON();
 };

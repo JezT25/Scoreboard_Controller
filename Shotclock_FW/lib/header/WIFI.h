@@ -12,6 +12,7 @@
 class WIFI_class : private HARDWARE_class {
 	private:
 		static bool nc;
+		static bool scZeroLatch;
 		static void OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len);
 
     public:

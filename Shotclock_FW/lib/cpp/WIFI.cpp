@@ -6,6 +6,7 @@
 #include "../setup.hpp"
 
 bool WIFI_class::nc = true;
+bool WIFI_class::scZeroLatch = false;
 
 void WIFI_class::Initialize() {
     WiFi.mode(WIFI_STA);
@@ -27,20 +28,37 @@ void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
 
     char jsonStr[len + 1];
 
-    memcpy(jsonStr, data, len); 
+    memcpy(jsonStr, data, len);
     jsonStr[len] = '\0';
     JsonDocument doc;
     deserializeJson(doc, jsonStr);
 
     Power_Flag = doc["PS"];
     Colon_Flag = doc["GD"];
-    Timeout_Flag = doc["TF"];
+
+    int newSC = doc["SC"];
+
+    // Trigger timeout ONLY once when SC becomes zero
+    if (newSC == 0)
+    {
+        if (!scZeroLatch)
+        {
+            Timeout_Flag = doc["TF"];   // allow relay once
+            scZeroLatch = true;
+        }
+    }
+    else
+    {
+        // Reset latch when shotclock is non-zero again
+        Timeout_Flag = doc["TF"];
+        scZeroLatch = false;
+    }
 
     if (doc["CF"] == LOW)
     {
         Segment_1 = (Colon_Flag == GAME_SECONDS) ? doc["TS"] : doc["TM"];
         Segment_2 = (Colon_Flag == GAME_SECONDS) ? doc["TMS"].as<int>() * 10 : doc["TS"];
-        Segment_3 = doc["SC"];
+        Segment_3 = newSC;
     }
     else
     {

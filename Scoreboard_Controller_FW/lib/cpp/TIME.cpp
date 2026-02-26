@@ -20,14 +20,10 @@ void TIME_class::EndHander()
 
     if (endPeriod && millis() - prev_periodEnd >= BEEP_EXX_LONG)
     {
+        IData.PERIOD_END_FLAG = HIGH;
         ISystem.TIME_MODE = TIME_PAUSE;
         IData.TIME_MS = 0;
-        IData.GAME_PERIOD = (IData.GAME_PERIOD == FIRST_PERIOD) ? SECOND_PERIOD : (IData.GAME_PERIOD == SECOND_PERIOD) ? THIRD_PERIOD
-                                                                              : (IData.GAME_PERIOD == THIRD_PERIOD)    ? FOURTH_PERIOD
-                                                                              : (IData.GAME_PERIOD == FOURTH_PERIOD)   ? FIFTH_PERIOD
-                                                                              : (IData.GAME_PERIOD == FIFTH_PERIOD)    ? NO_PERIOD
-                                                                                                                       : FIRST_PERIOD;
-        IData.GAME_POSESSION = NO_POSESSION;
+
         endPeriod = false;
     }
 }
