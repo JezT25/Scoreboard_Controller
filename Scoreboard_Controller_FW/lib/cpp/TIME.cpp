@@ -23,6 +23,8 @@ void TIME_class::EndHander()
         IData.PERIOD_END_FLAG = HIGH;
         ISystem.TIME_MODE = TIME_PAUSE;
         IData.TIME_MS = 0;
+        IData.FOUL_HOME = 0;
+        IData.FOUL_AWAY = 0;
 
         endPeriod = false;
     }

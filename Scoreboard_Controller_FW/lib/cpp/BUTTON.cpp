@@ -71,7 +71,7 @@ inline void BUTTON_class::resetShotclock()
 {
     if (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
     {
-        IData.SHOTCLOCK = IData.TIME_SECOND < 14 ? IData.SHOTCLOCK = TWO_DIGIT_DASH : 14;
+        IData.SHOTCLOCK = IData.SHOTCLOCK == 14 ? TWO_DIGIT_DASH : 14;
     }
     else if (ISystem.SC_TIME_MODE != TIME_RUNNING)
     {
@@ -231,7 +231,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false)
             Beep(BEEP_SHORT, TONE_LOW);
             break;
         case HOME_FOUL:
-            IData.FOUL_HOME = IData.FOUL_HOME == 9 ? DIGIT_P : IData.FOUL_HOME == DIGIT_P ? 0
+            IData.FOUL_HOME = IData.FOUL_HOME == 4 ? DIGIT_P : IData.FOUL_HOME == DIGIT_P ? 0
                                                                                           : IData.FOUL_HOME + 1;
             Beep(BEEP_SHORT, TONE_HIGH);
             break;
@@ -240,7 +240,7 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false)
             Beep(BEEP_SHORT, TONE_LOW);
             break;
         case AWAY_FOUL:
-            IData.FOUL_AWAY = IData.FOUL_AWAY == 9 ? DIGIT_P : IData.FOUL_AWAY == DIGIT_P ? 0
+            IData.FOUL_AWAY = IData.FOUL_AWAY == 4 ? DIGIT_P : IData.FOUL_AWAY == DIGIT_P ? 0
                                                                                           : IData.FOUL_AWAY + 1;
             Beep(BEEP_SHORT, TONE_HIGH);
             break;
