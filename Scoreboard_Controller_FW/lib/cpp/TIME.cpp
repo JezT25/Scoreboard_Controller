@@ -14,7 +14,9 @@ void TIME_class::EndHander()
 {
     if (endSC && millis() - prev_SCEnd >= BEEP_EX_LONG)
     {
-        IData.SHOTCLOCK = (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24) ? TWO_DIGIT_DASH : IData.SHOTCLOCK;
+        // Shot clock alert complete - clear flag
+        // SHOTCLOCK already reset to 24 and running
+        IData.TIMEOUT_FLAG = LOW;
         endSC = false;
     }
 
@@ -32,7 +34,8 @@ void TIME_class::EndHander()
 
 void TIME_class::MainDisplayFunction()
 {
-    if (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
+    // Only show dash if shot clock is not running and game time is less than shot clock display
+    if (ISystem.SC_TIME_MODE != TIME_RUNNING && IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
     {
         IData.SHOTCLOCK = TWO_DIGIT_DASH;
         ISystem.SC_TIME_MODE = TIME_RESET;
@@ -90,9 +93,10 @@ void TIME_class::ShotclockFunction()
     {
         if (IData.SHOTCLOCK == 0)
         {
+            // Shot clock expired - reset to 24 and keep running
+            // Game clock continues uninterrupted
+            IData.SHOTCLOCK = 24;
             IData.TIMEOUT_FLAG = HIGH;
-            ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : ISystem.TIME_MODE;
-            ISystem.SC_TIME_MODE = TIME_RESET;
             Beep(BEEP_EX_LONG, TONE_HIGH);
             Honk(BEEP_EX_LONG);
             endSC = true;
