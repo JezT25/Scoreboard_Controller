@@ -25,8 +25,8 @@ void TIME_class::EndHander()
         IData.PERIOD_END_FLAG = HIGH;
         ISystem.TIME_MODE = TIME_PAUSE;
         IData.TIME_MS = 0;
-        IData.FOUL_HOME = 0;
-        IData.FOUL_AWAY = 0;
+        // Foul reset is now synchronized with Time On/Off button press (period advancement)
+        // Do not reset fouls here - they will be reset in ButtonReleaseFunctions() when TIME_BUTTON is pressed
 
         endPeriod = false;
     }
@@ -105,7 +105,8 @@ void TIME_class::ShotclockFunction()
         }
         else if (IData.TIME_SC_MS == 0)
         {
-            if (IData.SHOTCLOCK > 0)
+            // Only decrement normal SHOTCLOCK values (0-24), not special values (>= 100)
+            if (IData.SHOTCLOCK > 0 && IData.SHOTCLOCK < 100)
             {
                 if (IData.SHOTCLOCK >= 2 && IData.SHOTCLOCK <= 5)
                 {

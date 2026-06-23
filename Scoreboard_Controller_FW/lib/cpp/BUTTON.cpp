@@ -43,6 +43,9 @@ void BUTTON_class::ButtonReleaseFunctions(int i)
                                                                                           : (IData.GAME_PERIOD == FIFTH_PERIOD)    ? NO_PERIOD
                                                                                                                                    : FIRST_PERIOD;
                     IData.PERIOD_END_FLAG = LOW;
+                    // Reset team fouls when advancing to the next period
+                    IData.FOUL_HOME = 0;
+                    IData.FOUL_AWAY = 0;
                 }
             }
             else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIMEOUT_FLAG == HIGH)
@@ -71,7 +74,7 @@ inline void BUTTON_class::resetShotclock()
 {
     if (IData.TIME_MINUTE == 0 && IData.TIME_SECOND < 24)
     {
-        IData.SHOTCLOCK = IData.SHOTCLOCK == 14 ? TWO_DIGIT_DASH : 14;
+        IData.SHOTCLOCK = IData.SHOTCLOCK == TWO_DIGIT_DASH ? 14 : TWO_DIGIT_DASH;
     }
     else if (ISystem.SC_TIME_MODE != TIME_RUNNING)
     {
