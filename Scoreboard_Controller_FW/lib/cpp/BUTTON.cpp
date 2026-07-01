@@ -28,7 +28,14 @@ void BUTTON_class::ButtonReleaseFunctions(int i)
     {
         if (ISystem.TIME_MODE != TIME_CLOCK && millis() - lastTimeButtonTime >= DEBOUNCE_SHORT && TimeOnOFFPressed)
         {
-            if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0)
+            // Handle expired shotclock case: stop game time but keep shotclock frozen
+            if (ISystem.SC_TIME_MODE == TIME_EXPIRED && ISystem.TIME_MODE == TIME_RUNNING)
+            {
+                ISystem.TIME_MODE = TIME_PAUSE;
+                // Keep SC_TIME_MODE at TIME_EXPIRED and SHOTCLOCK at 0 with series light on
+                Beep(BEEP_SHORT, TONE_HIGH);
+            }
+            else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0)
             {
                 IData.TIME_MINUTE = original_MIN;
                 IData.TIME_SECOND = original_SEC;
@@ -47,19 +54,21 @@ void BUTTON_class::ButtonReleaseFunctions(int i)
                     IData.FOUL_HOME = 0;
                     IData.FOUL_AWAY = 0;
                 }
+                Beep(BEEP_SHORT, TONE_HIGH);
             }
             else if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIMEOUT_FLAG == HIGH)
             {
                 ISystem.TIME_MODE = TIME_RUNNING;
                 ISystem.SC_TIME_MODE = TIME_RESET;
                 resetShotclock();
+                Beep(BEEP_SHORT, TONE_HIGH);
             }
             else
             {
                 ISystem.TIME_MODE = ISystem.TIME_MODE == TIME_RUNNING ? TIME_PAUSE : TIME_RUNNING;
                 ISystem.SC_TIME_MODE = TIME_PAUSE;
+                Beep(BEEP_SHORT, TONE_HIGH);
             }
-            Beep(BEEP_SHORT, TONE_HIGH);
         }
         TimeOnOFFPressed = false;
     }
@@ -76,7 +85,7 @@ inline void BUTTON_class::resetShotclock()
     {
         IData.SHOTCLOCK = IData.SHOTCLOCK == TWO_DIGIT_DASH ? 14 : TWO_DIGIT_DASH;
     }
-    else if (ISystem.SC_TIME_MODE != TIME_RUNNING)
+    else if (ISystem.SC_TIME_MODE != TIME_RUNNING && ISystem.SC_TIME_MODE != TIME_EXPIRED)
     {
         IData.SHOTCLOCK = IData.SHOTCLOCK == 24 ? 14 : 24;
     }
@@ -281,6 +290,16 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false)
             }
             break;
         case SC_PRESET:
+            // Reset shotclock when pressed, even if it's expired
+            if (ISystem.SC_TIME_MODE == TIME_EXPIRED)
+            {
+                // Reset shotclock from expired state
+                IData.SHOTCLOCK = 24;
+                ISystem.SC_TIME_MODE = TIME_RESET;
+                IData.TIMEOUT_FLAG = LOW;
+                Beep(BEEP_SHORT, TONE_HIGH);
+                return;
+            }
             if (!isSCOnOffPressed || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST)
                 return;
             if (ISystem.TIME_MODE == TIME_PAUSE && IData.TIME_MINUTE == 0 && IData.TIME_SECOND == 0 && IData.TIME_MS == 0)
@@ -295,6 +314,15 @@ void BUTTON_class::ButtonFunctions(int i, bool holdButton = false)
             ISystem.SC_TIME_MODE = TIME_RESET;
             break;
         case SC_STARTSTOP:
+            // Reset shotclock when pressed from expired state
+            if (ISystem.SC_TIME_MODE == TIME_EXPIRED)
+            {
+                IData.SHOTCLOCK = 24;
+                ISystem.SC_TIME_MODE = TIME_RESET;
+                IData.TIMEOUT_FLAG = LOW;
+                Beep(BEEP_SHORT, TONE_HIGH);
+                return;
+            }
             if (!isSCPresetPressed || IData.SHOTCLOCK == TWO_DIGIT_DASH || ISystem.TIME_MODE == TIME_ADJUST || ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_CLOCKADJUST)
                 return;
             if (holdButton || IData.SHOTCLOCK == TWO_DIGIT_DASH)

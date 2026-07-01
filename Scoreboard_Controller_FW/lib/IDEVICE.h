@@ -37,6 +37,7 @@
 #define TIME_RESET          4
 #define TIME_CLOCK          5
 #define TIME_CLOCKADJUST    6
+#define TIME_EXPIRED        7
 
 #define POWER_OFF           0
 #define POWER_ON            1

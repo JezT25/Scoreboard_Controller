@@ -34,8 +34,8 @@ void TIME_class::EndHander()
 
 void TIME_class::MainDisplayFunction()
 {
-    // Only show dash if shot clock is not running and game time is less than shot clock display
-    if (ISystem.SC_TIME_MODE != TIME_RUNNING && IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
+    // Only show dash if shot clock is not running/expired and game time is less than shot clock display
+    if (ISystem.SC_TIME_MODE != TIME_RUNNING && ISystem.SC_TIME_MODE != TIME_EXPIRED && IData.TIME_MINUTE == 0 && IData.TIME_SECOND < IData.SHOTCLOCK)
     {
         IData.SHOTCLOCK = TWO_DIGIT_DASH;
         ISystem.SC_TIME_MODE = TIME_RESET;
@@ -93,9 +93,9 @@ void TIME_class::ShotclockFunction()
     {
         if (IData.SHOTCLOCK == 0)
         {
-            // Shot clock expired - reset to 24 and keep running
+            // Shot clock expired - freeze at 0 with series light on
             // Game clock continues uninterrupted
-            IData.SHOTCLOCK = 24;
+            ISystem.SC_TIME_MODE = TIME_EXPIRED;
             IData.TIMEOUT_FLAG = HIGH;
             Beep(BEEP_EX_LONG, TONE_HIGH);
             Honk(BEEP_EX_LONG);
@@ -116,6 +116,12 @@ void TIME_class::ShotclockFunction()
             }
             IData.TIME_SC_MS = 9;
         }
+    }
+    else if (ISystem.SC_TIME_MODE == TIME_EXPIRED)
+    {
+        // Shotclock is frozen at 0 - only decrement main display ms if needed
+        IData.TIME_SC_MS = 9;
+        // Keep SHOTCLOCK at 0 and TIMEOUT_FLAG HIGH (series light on)
     }
 }
 
