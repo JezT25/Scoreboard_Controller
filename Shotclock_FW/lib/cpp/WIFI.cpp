@@ -65,6 +65,56 @@ void WIFI_class::Initialize() {
 void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
     if (len == 0) return;
 
+void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
+    if (len == 0) return;
+
+    // Hot path: a scoreboard update arrives every cycle, so check it before any text parsing
+    if (len == sizeof(ScoreboardPacket) + 1)
+    {
+        if (Protocol_CRC8(data, sizeof(ScoreboardPacket)) != data[sizeof(ScoreboardPacket)]) return;
+
+        ScoreboardPacket packet;
+        memcpy(&packet, data, sizeof(packet));
+
+        Power_Flag = (packet.flags & PACKET_FLAG_POWER) != 0;
+        Colon_Flag = packet.gameDots;
+
+        int newSC = packet.shotclock;
+
+        // Trigger timeout ONLY once when SC becomes zero
+        if (newSC == 0)
+        {
+            if (!scZeroLatch)
+            {
+                Timeout_Flag = (packet.flags & PACKET_FLAG_TIMEOUT) != 0;   // allow relay once
+                scZeroLatch = true;
+            }
+        }
+        else
+        {
+            // Reset latch when shotclock is non-zero again
+            Timeout_Flag = (packet.flags & PACKET_FLAG_TIMEOUT) != 0;
+            scZeroLatch = false;
+        }
+
+        if ((packet.flags & PACKET_FLAG_CLOCK) == 0)
+        {
+            Segment_1 = (Colon_Flag == GAME_SECONDS) ? packet.timeSecond : packet.timeMinute;
+            Segment_2 = (Colon_Flag == GAME_SECONDS) ? packet.timeMs * 10 : packet.timeSecond;
+            Segment_3 = newSC;
+        }
+        else
+        {
+            Segment_1 = packet.clockHour;
+            Segment_2 = packet.clockMinute;
+            Segment_3 = TWO_DIGIT_DASH;
+        }
+
+        nc = false;
+        return;
+    }
+
+    // Cold path: short ASCII pairing control messages only
     char message[32];
     if (len >= sizeof(message)) return;
     memcpy(message, data, len);
@@ -80,49 +130,4 @@ void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
         assignedChannel = channel;
         return;
     }
-
-    if (message[0] != '{') return;
-
-    char jsonStr[len + 1];
-
-    memcpy(jsonStr, data, len);
-    jsonStr[len] = '\0';
-    JsonDocument doc;
-    deserializeJson(doc, jsonStr);
-
-    Power_Flag = doc["PS"];
-    Colon_Flag = doc["GD"];
-
-    int newSC = doc["SC"];
-
-    // Trigger timeout ONLY once when SC becomes zero
-    if (newSC == 0)
-    {
-        if (!scZeroLatch)
-        {
-            Timeout_Flag = doc["TF"];   // allow relay once
-            scZeroLatch = true;
-        }
-    }
-    else
-    {
-        // Reset latch when shotclock is non-zero again
-        Timeout_Flag = doc["TF"];
-        scZeroLatch = false;
-    }
-
-    if (doc["CF"] == LOW)
-    {
-        Segment_1 = (Colon_Flag == GAME_SECONDS) ? doc["TS"] : doc["TM"];
-        Segment_2 = (Colon_Flag == GAME_SECONDS) ? doc["TMS"].as<int>() * 10 : doc["TS"];
-        Segment_3 = newSC;
-    }
-    else
-    {
-        Segment_1 = doc["CH"];
-        Segment_2 = doc["CM"];
-        Segment_3 = TWO_DIGIT_DASH;
-    }
-
-    nc = false;
 }

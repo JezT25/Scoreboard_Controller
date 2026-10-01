@@ -7,12 +7,15 @@
 #define WIFI_h
 
 #include "../setup.hpp"
+#include "../../../Shared/PROTOCOL.h"
 
 #define WIFI_INTERVAL 20
 
 class WIFI_class : private HARDWARE_class {
     private:
         unsigned long lastWiFiUpdate = 0;
+
+        void BuildPacket(ScoreboardPacket &packet);
 
     public:
         void StartPairing();

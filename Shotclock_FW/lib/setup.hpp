@@ -8,7 +8,6 @@
 #define setup_cpp_included
 
 /** LIBRARIES **/
-#include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <espnow.h>
 #include <Ticker.h>

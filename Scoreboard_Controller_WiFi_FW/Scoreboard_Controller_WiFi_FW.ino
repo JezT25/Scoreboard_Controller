@@ -2,6 +2,7 @@
 #include <espnow.h>
 #include <EEPROM.h>
 #include <user_interface.h>
+#include "../Shared/PROTOCOL.h"
 
 #define CHANNEL1 1
 #define CHANNEL2 6
@@ -245,6 +246,66 @@ void sendUpdate(const char *data, size_t len)
 			esp_now_send(macs[i], (uint8_t *)data, len);
 }
 
+// Downstream scoreboard/shotclock nodes now also speak the binary ScoreboardPacket over ESP-NOW,
+// so the already CRC-verified [packet][CRC8] bytes are forwarded as-is without re-encoding.
+void handleSerial()
+{
+	static bool inFrame = false;
+	static uint8_t frameBuf[sizeof(ScoreboardPacket) + 1];
+	static uint8_t frameIndex = 0;
+	static char textBuf[8];
+	static uint8_t textIndex = 0;
+
+	while (Serial.available())
+	{
+		uint8_t byteIn = (uint8_t)Serial.read();
+
+		if (!inFrame)
+		{
+			if (byteIn == PACKET_SOF)
+			{
+				inFrame = true;
+				frameIndex = 0;
+				textIndex = 0;
+				continue;
+			}
+
+			// Fall back to the plaintext "PAIR" control command
+			if (byteIn == '\r')
+				continue;
+			if (byteIn == '\n')
+			{
+				if (textIndex > 0)
+				{
+					textBuf[textIndex] = '\0';
+					if (strcmp(textBuf, "PAIR") == 0)
+						beginPairing();
+					textIndex = 0;
+				}
+				continue;
+			}
+			if (textIndex < sizeof(textBuf) - 1)
+				textBuf[textIndex++] = (char)byteIn;
+			else
+				textIndex = 0;
+			continue;
+		}
+
+		frameBuf[frameIndex++] = byteIn;
+		if (frameIndex < sizeof(frameBuf))
+			continue;
+
+		inFrame = false;
+		ScoreboardPacket packet;
+		memcpy(&packet, frameBuf, sizeof(packet));
+		uint8_t receivedCrc = frameBuf[sizeof(frameBuf) - 1];
+		if (pairing || Protocol_CRC8((uint8_t *)&packet, sizeof(packet)) != receivedCrc)
+			continue;
+
+		sendUpdate((const char *)frameBuf, sizeof(frameBuf));
+	}
+}
+
 void setup()
 {
 	Serial.begin(115200);
@@ -278,14 +339,5 @@ void loop()
 		Serial.println("PAIR:FAIL");
 	}
 
-	if (Serial.available())
-	{
-		char data[250];
-		size_t len = Serial.readBytesUntil('\n', data, sizeof(data) - 1);
-		data[len] = '\0';
-		if (strcmp(data, "PAIR") == 0)
-			beginPairing();
-		else if (!pairing && len > 0 && data[0] == '{')
-			sendUpdate(data, len);
-	}
+	handleSerial();
 }

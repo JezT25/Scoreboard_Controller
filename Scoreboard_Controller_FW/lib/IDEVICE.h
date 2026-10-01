@@ -81,8 +81,6 @@ class IDATA {
         volatile bool CLOCK_FLAG                =    LOW;
 
         volatile bool PERIOD_END_FLAG           =    LOW;
-
-        const char* toJSON();
 };
 
 class ISYSTEM {

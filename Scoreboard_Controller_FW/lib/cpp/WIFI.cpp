@@ -10,43 +10,26 @@ void WIFI_class::StartPairing()
     Serial3.println("PAIR");
 }
 
-const char *IDATA::toJSON()
+void WIFI_class::BuildPacket(ScoreboardPacket &packet)
 {
-    static char buffer[350]; // Allocate just enough buffer space
-
-    int length = snprintf(
-        buffer, sizeof(buffer),
-        "{\"SH\":%d,\"FH\":%d,\"TH\":%d,"
-        "\"SA\":%d,\"FA\":%d,\"TA\":%d,"
-        "\"SC\":%d,\"TM\":%d,\"TS\":%d,"
-        "\"TMS\":%d,\"CH\":%d,\"CM\":%d,"
-        "\"GP\":%d,\"GS\":%d,\"GD\":%d,"
-        "\"TF\":%d,\"CF\":%d,\"PS\":%d}",
-        SCORE_HOME,
-        FOUL_HOME,
-        TIMEOUT_HOME,
-        SCORE_AWAY,
-        FOUL_AWAY,
-        TIMEOUT_AWAY,
-        SHOTCLOCK,
-        TIME_MINUTE,
-        TIME_SECOND,
-        TIME_MS,
-        CLOCK_HOUR,
-        CLOCK_MINUTE,
-        GAME_PERIOD,
-        GAME_POSESSION,
-        GAME_DOTS,
-        TIMEOUT_FLAG,
-        CLOCK_FLAG,
-        ISystem.POWER_STATE);
-
-    if (length < 0 || length >= sizeof(buffer))
-    {
-        return "{}"; // Fallback in case of error
-    }
-
-    return buffer;
+    packet.scoreHome     = IData.SCORE_HOME;
+    packet.foulHome      = IData.FOUL_HOME;
+    packet.timeoutHome   = IData.TIMEOUT_HOME;
+    packet.scoreAway     = IData.SCORE_AWAY;
+    packet.foulAway      = IData.FOUL_AWAY;
+    packet.timeoutAway   = IData.TIMEOUT_AWAY;
+    packet.shotclock     = IData.SHOTCLOCK;
+    packet.timeMinute    = IData.TIME_MINUTE;
+    packet.timeSecond    = IData.TIME_SECOND;
+    packet.timeMs        = IData.TIME_MS;
+    packet.clockHour     = IData.CLOCK_HOUR;
+    packet.clockMinute   = IData.CLOCK_MINUTE;
+    packet.gamePeriod    = IData.GAME_PERIOD;
+    packet.gamePosession = IData.GAME_POSESSION;
+    packet.gameDots      = IData.GAME_DOTS;
+    packet.flags = (IData.TIMEOUT_FLAG  ? PACKET_FLAG_TIMEOUT : 0) |
+                   (IData.CLOCK_FLAG    ? PACKET_FLAG_CLOCK   : 0) |
+                   (ISystem.POWER_STATE ? PACKET_FLAG_POWER   : 0);
 }
 
 void WIFI_class::SendUpdate()
@@ -57,7 +40,17 @@ void WIFI_class::SendUpdate()
     if (millis() - lastWiFiUpdate >= WIFI_INTERVAL)
     {
         lastWiFiUpdate = millis();
-        Serial3.println(IData.toJSON());
+
+        ScoreboardPacket packet;
+        BuildPacket(packet);
+
+        // Frame: [SOF][packed struct][CRC8] so the receiver can resync on corruption
+        uint8_t frame[1 + sizeof(ScoreboardPacket) + 1];
+        frame[0] = PACKET_SOF;
+        memcpy(&frame[1], &packet, sizeof(packet));
+        frame[sizeof(frame) - 1] = Protocol_CRC8((uint8_t *)&packet, sizeof(packet));
+
+        Serial3.write(frame, sizeof(frame));
     }
 }
 
