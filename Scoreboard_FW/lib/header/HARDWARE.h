@@ -9,6 +9,7 @@
 #include "../setup.hpp"
 
 #define LED_FREQ			0.0025
+#define D3_LOW_HOLD_MS		1
 
 #define DIGIT_P             12
 #define DISABLE_DIGIT		15
@@ -44,7 +45,12 @@ class HARDWARE_class {
         const int segmentPins[8]     = { D0, D1, D2, D3, D4, D5, D6, D7 };
         volatile int CurrentSegment  = TENS_SEGMENT;
         Ticker timer;
+        Ticker d3Timer;
         void IRAM_ATTR DisplayLED();
+        // D3 doubles as the tens-digit bit-3 data line and the 4028 "D" address
+        // input. It rests HIGH and is only pulsed LOW (briefly extended) when
+        // the data actually requires it, instead of blanking the whole bus.
+        void IRAM_ATTR SetTensBit3(bool high);
 
     protected:
         static volatile int pPeriod;

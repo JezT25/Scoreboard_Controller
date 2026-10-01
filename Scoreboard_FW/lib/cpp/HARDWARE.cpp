@@ -27,6 +27,20 @@ volatile int HARDWARE_class::Colon_Flag     = GAME_MINUTE;
 volatile bool HARDWARE_class::Power_Flag    = POWER_ON;
 volatile bool HARDWARE_class::Clock_Flag    = LOW;
 
+// D3 rests HIGH by default. When the tens-digit data needs bit-3 LOW, we hold
+// it LOW a little longer than a single write so the hardware-delayed 4028 "D"
+// input reliably samples the LOW level, then release it back HIGH right away.
+// When it needs HIGH, nothing extra is required since that is the resting state.
+void IRAM_ATTR HARDWARE_class::SetTensBit3(bool high) {
+    if (high) {
+        d3Timer.detach();
+        digitalWrite(D3, HIGH);
+    } else {
+        digitalWrite(D3, LOW);
+        d3Timer.once_ms(D3_LOW_HOLD_MS, []() { digitalWrite(D3, HIGH); });
+    }
+}
+
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
     #if BOARD == 1
         if(Power_Flag == POWER_ON)
@@ -74,27 +88,16 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                         break;
                 }
 
-                // Clear (We dont clear TENS since Period Data is already blank for TENS and doing so will cause ghosting)
-                if (CurrentSegment != TENS_SEGMENT)
-                {
-                    digitalWrite(D0, HIGH);
-                    digitalWrite(D1, HIGH);
-                    digitalWrite(D2, HIGH);
-                    digitalWrite(D3, HIGH);
-                    digitalWrite(D4, HIGH);
-                    digitalWrite(D5, HIGH);
-                    digitalWrite(D6, HIGH);
-                    digitalWrite(D7, HIGH);
-                }
-
-                // Set Digits
+                // Set Digits directly (no full-bus blanking); D3 is pulsed via
+                // SetTensBit3 instead of blanking, which removes the visible
+                // whole-display blink while still avoiding ghosting on the 4028.
                 digitalWrite(D8, (CurrentSegment & 1));
                 digitalWrite(D9, (CurrentSegment & 2) >> 1);
                 digitalWrite(D10, (CurrentSegment & 4) >> 2);
                 digitalWrite(D0, (TENS & 1));
                 digitalWrite(D1, (TENS & 2) >> 1);
                 digitalWrite(D2, (TENS & 4) >> 2);
-                digitalWrite(D3, (TENS & 8) >> 3);
+                SetTensBit3((TENS & 8) >> 3);
                 digitalWrite(D4, (ONES & 1));
                 digitalWrite(D5, (ONES & 2) >> 1);
                 digitalWrite(D6, (ONES & 4) >> 2);
@@ -115,7 +118,7 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
                 digitalWrite(D0, (p & 1));
                 digitalWrite(D1, (p & 2) >> 1);
                 digitalWrite(D2, HIGH);
-                digitalWrite(D3, HIGH);
+                SetTensBit3(HIGH);
                 digitalWrite(D4, (p & 4) >> 2);
                 digitalWrite(D5, (p & 8) >> 3);
                 digitalWrite(D6, HIGH);
@@ -198,6 +201,7 @@ void HARDWARE_class::Initialize() {
     pinMode(D8, OUTPUT);
     pinMode(D9, OUTPUT);
     pinMode(D10, OUTPUT);
+    digitalWrite(D3, HIGH); // D3 resting state, see SetTensBit3()
     timer.attach(LED_FREQ, [this]() { this->DisplayLED(); });
     interrupts();
 }
