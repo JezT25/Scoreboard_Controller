@@ -25,6 +25,7 @@ void loop()
 {
 	HARDWARE.Listener();
 	TIME.Function();
+	WIFI.ReadPairingStatus();
 	LED.RefreshBuffer();
 	BUTTON.Function();
 	WIFI.SendUpdate();

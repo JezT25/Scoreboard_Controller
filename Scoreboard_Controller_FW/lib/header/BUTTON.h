@@ -21,6 +21,9 @@ class BUTTON_class : private HARDWARE_class {
     private:
         bool SCHeldWhileRunning = false;
         bool TimeOnOFFPressed   = false;
+        bool pairChordActive    = false;
+        bool pairChordTriggered = false;
+        unsigned long pairChordStarted = 0;
         unsigned int original_MIN = IData.TIME_MINUTE;
         unsigned int original_SEC = IData.TIME_SECOND;
         unsigned int debounceOffset;

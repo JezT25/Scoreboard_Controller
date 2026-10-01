@@ -36,9 +36,10 @@ class LED_class : private HARDWARE_class {
         volatile unsigned int currentSegment;
         volatile unsigned long lastBlinkTime;
         volatile bool BlinkState;
+        bool pairingMode = false;
         volatile int Segment_Buffer[4][4][7];
         volatile int Dots_Buffer[2][4];
-        const int LED_digitValues[13] =
+        const int LED_digitValues[16] =
         {
             B0111111, // 0
             B0000110, // 1
@@ -52,7 +53,10 @@ class LED_class : private HARDWARE_class {
             B1101111, // 9
             B0000000, // All Off
             B1000000, // -
-            B1110011  // P
+            B1110011, // P
+            B1110111, // A
+            B0000110, // I
+            B1010000  // r
         };
         enum LED_Displays
         {
@@ -77,6 +81,7 @@ class LED_class : private HARDWARE_class {
         void ClearBuffer();
 
     public:
+        void SetPairingMode(bool enabled);
         void RefreshBuffer();
         void DisplayDigits();
 };

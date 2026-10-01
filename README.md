@@ -6,226 +6,127 @@
 
 ## 📑 Table of Contents
 
-1. [📝 Overview](#overview)
-2. [🛠 Hardware Setup](#hardware-setup)
-3. [📶 ESP-NOW Configuration](#wi-fi-configuration)
-4. [💻 Programming Method](#programming-method)
-5. [🛠 Programming Steps](#programming-steps)
-6. [🔌 Connections and Pinouts](#connections-and-pinouts)
-7. [🕹 DIP Switch Settings](#dip-switch-settings)
-8. [🆘 Troubleshooting](#troubleshooting)
-9. [📜 License](#license)
-10. [👨‍💻 Author](#author)
+1. [Overview](#overview)
+2. [Hardware Setup](#hardware-setup)
+3. [A0 Modes and Pairing](#a0-modes-and-pairing)
+4. [Firmware Programming](#firmware-programming)
+5. [Connections and DIP Switches](#connections-and-dip-switches)
+6. [Troubleshooting](#troubleshooting)
+7. [License](#license)
+8. [Author](#author)
 
 ---
 
 <a id="overview"></a>
-## 📝 Overview
+## Overview
 
-The project consists of multiple components that communicate with each other over ESP-NOW and serial communication:
+The Mega2560+WiFi combo board is one physical board with two processors. The Mega 2560 runs the controller and owns the buttons, buzzer, and controller display. Its onboard ESP8266 runs the Wi-Fi firmware and communicates with the Mega over the board's internal Serial3 connection. That ESP8266 sends scoreboard updates to display boards over ESP-NOW.
 
-- **Remote Controller Board:** Arduino Mega 2560 + ESP8266
-- **Wi-Fi Module for Remote Controller:** NodeMCU 8266
-- **Scoreboard/Shotclock:** NodeMCU 8266 for controlling the shotclock & scoreboard
+The usual installation has one scoreboard and two shotclocks. The scoreboard and both shotclocks are separate ESP8266 display boards.
 
-### Key Notes:
-
-- **USE LEVEL SHIFTER WHEN CONNECTING MEGA+WIFI TO NODEMCU8266.**
-- The ESP8266 on the Mega+WiFi setup is **disabled** and not used due to performance issues.
-- The system includes firmware for the different components:
-  - **Scoreboard_Controller_FW:** Runs on the Arduino Mega 2560.
-  - **Scoreboard_Controller_WiFi_FW:** Runs on the NodeMCU 8266 for the Wi-Fi module.
-  - **Scoreboard_FW:** Runs on the NodeMCU 8266 for the scoreboard.
-  - **Shotclock_FW:** Runs on the NodeMCU 8266 for the shotclock.
+- `Scoreboard_Controller_FW`: runs on the Mega 2560 processor.
+- `Scoreboard_Controller_WiFi_FW`: runs on the combo board's onboard ESP8266.
+- `Scoreboard_FW`: runs on the scoreboard display ESP8266. Select `BOARD 1` or `BOARD 2` to match the display wiring.
+- `Shotclock_FW`: runs on both shotclock display ESP8266 boards.
 
 ---
 
 <a id="hardware-setup"></a>
-## 🛠 Hardware Setup
+## Hardware Setup
 
-### Components:
+Required hardware:
 
-- **Arduino Mega 2560:** Acts as the main controller for the scoreboard.
-- **NodeMCU 8266 x 1 (Wi-Fi Module):** Communicates with the Mega+WiFi board via UART.
-- **NodeMCU 8266 x 3 (Scoreboard/Shotclock):** Controls the shotclock functionality.
-- **Level Shifter:** Converts voltage between Arduino Mega (5V) and NodeMCU 8266 (3.3V) for UART communication.
+- 1 Mega2560+WiFi combo board. Its Mega 2560 processor runs the controller; its onboard ESP8266 runs the ESP-NOW bridge.
+- 1 ESP8266 display board for the scoreboard.
+- 2 ESP8266 display boards for the shotclocks.
 
-### Required Components:
-
-- Arduino Mega 2560
-- NodeMCU 8266 (for Wi-Fi communication)
-- NodeMCU 8266 (for Scoreboard/Shotclock control)
-- Level shifter (3.3V to 5V for serial communication)
+The Mega's buttons, buzzer, and four-digit display are used for pairing feedback. The onboard Mega-to-ESP8266 Serial3 connection is internal to the combo board; no separate Wi-Fi bridge NodeMCU or external UART wiring is needed.
 
 ---
 
-<a id="wi-fi-configuration"></a>
-## 📶 ESP-NOW Configuration
+<a id="a0-modes-and-pairing"></a>
+## A0 Modes and Pairing
 
-To set up the ESP-NOW communication protocol for the system, follow these steps to configure the firmware files for the Wi-Fi modules:
+The onboard ESP8266 reads A0 at startup to choose a mode and radio channel:
 
-1. Open the `Scoreboard_Controller_WiFi_FW.ino` file.
-2. Locate the section where the ESP-NOW peer devices are defined.
-3. Add the MAC addresses of the peer devices (e.g., the shotclock module and scoreboard controller) to the ESP-NOW peer list.
+| A0 reading | Mode | Channel | Routing |
+| --- | --- | ---: | --- |
+| Below 450 (near 0 V) | Group 1 | 1 | Send to the three MAC addresses stored for Group 1. |
+| 450-899 (about 1.5 V) | Group 2 | 6 | Send to the three MAC addresses stored for Group 2. |
+| 900 or above (near 3.3 V) | All | 11, plus channels 1 and 6 | Send the ESP-NOW broadcast MAC `FF:FF:FF:FF:FF:FF` so devices on any group channel receive the update. |
 
-```cpp
-uint8_t broadcast1_1[] = {0xBC, 0xDD, 0xC2, 0x13, 0x30, 0x9F};
-uint8_t broadcast1_2[] = {0x2C, 0xF4, 0x32, 0x79, 0x15, 0x0F};
-uint8_t broadcast1_3[] = {0x40, 0x91, 0x51, 0x48, 0x27, 0xEA};
-uint8_t broadcast1_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-```
-### 👯‍♀️ Setting Other Groups
+The A0 level must be selected before powering the Mega2560+WiFi board. The scoreboard and shotclocks do not use A0.
 
-To set the second group (optional) fill in the rest of the MAC Addresses
+### Pair a group
 
-```cpp
-uint8_t broadcast2_1[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-uint8_t broadcast2_2[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-uint8_t broadcast2_3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-uint8_t broadcast2_4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-```
+Pairing stores one scoreboard and two shotclock MAC addresses in the selected group bank in the onboard ESP8266's EEPROM. Group 1 and Group 2 have separate banks. A bank is replaced only after all three devices have been found and acknowledged.
 
-The device will have 3 modes.
-- Group 1 Connect
-- Group 2 Connect
-- Connect to All
+1. Set A0 to Group 1 or Group 2, then power on the Mega2560+WiFi board.
+2. Hold the Mega's `TIME_MIN` and `TIME_SEC` buttons together for three seconds. The controller display shows `PAIR` and the buzzer sounds.
+3. Within the 15-second listening window, power-cycle the scoreboard and both shotclock boards. Each display repeatedly advertises its role and MAC across channels 1, 6, and 11 until it receives a group assignment or live controller data.
+4. The bridge assigns the selected group's channel to each display. The Mega gives a short beep as each device is acknowledged.
+5. When one scoreboard and two shotclocks are confirmed, the bridge saves the three addresses to EEPROM. `PAIR` clears and a longer beep signals success.
 
-NOTE: This configuration is only for the Scoreboard_Controller_WiFi_FW and the ESP8266 it is programmed on. To change modes, set the voltage of A0 in the controller as follows:
+If three valid devices are not confirmed before the window expires, pairing fails and the previous saved group remains intact. Unsynchronized displays continue advertising, so you can hold the two time buttons again to reopen pairing without rebooting them.
 
-- 0V: Group 1
-- 1.5V: Group 2
-- 3.3V: Connect to All
+Repeat these steps with A0 set to the other group to create or replace that group's separate set. Use separate display sets for Group 1 and Group 2 because each display stores one operating channel.
 
-The rest of the other NodeMCU devices will not use A0; only this one does.
+### All mode
 
-> To know the MAC Address of device, refer to [🛠 Programming Steps](#programming-steps).
+All mode does not use a saved MAC list. The bridge sends the broadcast MAC on channels 1, 6, and 11 so all in-range display boards can receive, regardless of which group channel they last stored. Pairing is not available while A0 selects All; select Group 1 or Group 2 to pair a saved set.
 
 ---
 
-<a id="programming-method"></a>
-## 💻 Programming Method
+<a id="firmware-programming"></a>
+## Firmware Programming
 
-Follow these steps to flash the correct firmware onto each board:
+Use the Arduino IDE with the Mega 2560 and ESP8266 board packages installed. Select the correct serial port and processor for each upload.
 
-1. **Flash the Shotclock and Scoreboard Firmware:** Flash the NodeMCU 8266 shot clock with the Shotclock_FW and the scoreboard with the Scoreboard_FW.
-2. **Clear the Mega+WiFi ESP8266 Code:** Flash the ESP8266 module with blank Arduino code.
-3. **Flash the Mega+WiFi Controller Firmware:** Flash the Arduino Mega 2560 with the Scoreboard_Controller_FW firmware.
-4. **Flash the Wi-Fi Module for Mega+WiFi:** Flash the NodeMCU 8266 for the Mega+WiFi board with the Scoreboard_Controller_WiFi_FW.
+1. **Scoreboard:** In `Scoreboard_FW/Scoreboard_FW.ino`, set `#define BOARD 1` or `#define BOARD 2` to match the scoreboard hardware, then upload to the scoreboard ESP8266.
+2. **Shotclocks:** Upload `Shotclock_FW/Shotclock_FW.ino` to both shotclock ESP8266 boards.
+3. **Onboard Wi-Fi bridge:** Set the combo board's DIP switches to the ESP8266 programming position (`00001110` per the board diagram). Select the ESP8266 board and upload `Scoreboard_Controller_WiFi_FW/Scoreboard_Controller_WiFi_FW.ino` to the onboard ESP8266.
+4. **Mega controller:** Set the DIP switches to the Mega programming position (`00110000` per the board diagram). Select Arduino Mega 2560 and upload `Scoreboard_Controller_FW/Scoreboard_Controller_FW.ino` to the same combo board.
+5. Return the DIP switches to the normal run position and power-cycle the system.
 
----
-
-<a id="programming-steps"></a>
-## 🛠 Programming Steps
-
-### Step 1: Flash the Scoreboard
-
-1. **For Setup Board 1:**  
-   - In the code, define **Board 1** by setting `#define BOARD 1`.
-
-2. **For Setup Board 2:**  
-   - In the code, define **Board 2** by setting `#define BOARD 2`.
-
-3. **Upload Firmware to the NodeMCU 8266:**  
-   - After setting the correct board definition, upload the firmware to the corresponding board.  
-   - For **Board 1**, upload the Scoreboard firmware 1 to the NodeMCU 8266 controlling the scoreboard.  
-   - For **Board 2**, upload the Scoreboard firmware 2 to the NodeMCU 8266 controlling the Scoreboard.  
-   - In Arduino IDE, click the **Upload** button to send the firmware to the selected board.
-
-```cpp
-/* 
- * Choose the board you are using by setting the following:
- *   - If you are using Board 1, set:  #define BOARD 1
- *   - If you are using Board 2, set:  #define BOARD 2
- * 
- * Only **one** of the options should be set at a time. 
- * Change the correct line based on your setup.
- */
-
-#define BOARD 1
-```
-> Part of code to choose which fw version to upload to NODEMCU
-
-![](/docs/macaddress.png)
-> ESP8266 MAC Address
-
-### Step 2: Flash the Shotclock
-
-1. **Upload Shotclock Firmware:** Using Arduino IDE, upload the Shotclock_FW firmware to the NodeMCU 8266 controlling the shotclock.
-
-### Step 3: Programming the Mega+WiFi ESP8266
-
-1. **Set DIP Switch to 00001110:** Configures the ESP8266 on the Mega board to programming mode.
-2. **Flash the ESP8266:** Using Arduino IDE, upload blank Arduino code to the ESP8266 on the Mega to clear its memory.
-3. **Unplug Power:** Disconnect the power from the Mega+WiFi board.
-
-### Step 4: Flash the Arduino Mega 2560
-
-1. **Set DIP Switch to 00110000:** Configures the Mega board to load the scoreboard controller firmware.
-2. **Upload the Firmware:** Using Arduino IDE, upload the Scoreboard_Controller_FW firmware to the Mega 2560.
-3. **Unplug Power:** Disconnect the power from the Mega+WiFi board.
-
-### Step 5: Flash the Wi-Fi Module (NodeMCU 8266 for Mega+WiFi)
-
-1. **Configure the MAC Addresses:** Use the MAC addresses from the other modules and set them in the code before flashing.
-2. **Flash the Wi-Fi Firmware:** Using Arduino IDE, upload the Scoreboard_Controller_WiFi_FW firmware to the NodeMCU 8266 Wi-Fi module.
-3. **Unplug Power:** Disconnect the power after flashing the firmware.
-
-![](/docs/wemosd1mini_flashsettings.png)
-> ESP8266 Flash Settings
+The onboard ESP8266 must run the Wi-Fi bridge firmware; do not erase it or leave it blank. No MAC addresses are entered by hand. The ESP8266 flash settings image is available at `docs/wemosd1mini_flashsettings.png`.
 
 ---
 
-<a id="connections-and-pinouts"></a>
-## 🔌 Connections and Pinouts
+<a id="connections-and-dip-switches"></a>
+## Connections and DIP Switches
 
-### Main Board (Mega+WiFi):
+The Mega 2560 communicates with the onboard ESP8266 through the combo board's internal Serial3 connection at 115200 baud. There are no external TX/RX wires between these two processors. Use the board's DIP switches to select the Mega or ESP8266 for programming, then restore the normal run position after flashing. Refer to `docs/dipswitch.png` and the board's silkscreen for switch orientation.
 
-- Set the DIP switch to 00110000 to configure the Mega for scoreboard control.
-- Set serial connection switch to RXD0 and TXD0 to ensure no collision with RXD3 and TXD3.
-
-### Wi-Fi Module (NodeMCU 8266 for Mega+WiFi):
-
-- **RX/TX Communication:** The Mega's Serial3 (TX/RX – PIN 14 & 15) must be connected to the RX/TX pins on the NodeMCU 8266.
-  - Use a level shifter for proper voltage conversion between the 5V logic of the Mega and the 3.3V logic of the NodeMCU.
-  - **Connections:** RX > TX and TX > RX.
-
-### Shotclock Board (NodeMCU 8266):
-
-- The shot clock board is pre-configured with its firmware (Shotclock_FW) and works independently.
-
----
-
-<a id="dip-switch-settings"></a>
-## 🕹 DIP Switch Settings
-
-Ensure the following DIP switch settings are correctly configured for each step:
-
-1. **For Clearing Mega+WiFi ESP8266:**
-   - Set DIP switch to 00001110.
-2. **For Flashing the Mega+WiFi 2560 with the Scoreboard Controller Firmware:**
-   - Set DIP switch to 00110000.
-   - Set Serial switch to RX0/TX0.
-
-Refer to the DIP switch diagram for further details.
-
-![](/docs/dipswitch.png)
+The three display ESP8266 boards are powered independently and communicate wirelessly with the onboard ESP8266 using ESP-NOW. No router, SSID, password, or Internet connection is required.
 
 ---
 
 <a id="troubleshooting"></a>
-## 🆘 Troubleshooting
+## Troubleshooting
 
-### Issue: Communication Errors
+### Pairing finds fewer than three devices
 
-- **Solution:** Ensure the serial communication lines between the Mega 2560 and the NodeMCU are connected properly, and that level shifters are used to protect the 3.3V NodeMCU from the 5V Mega.
+- Confirm A0 selects Group 1 or Group 2, not All.
+- Enter `PAIR`, then reboot the scoreboard and both shotclocks. Unsynchronized devices continue advertising until assigned or until they receive live controller data.
+- Confirm the scoreboard firmware is installed on one board and shotclock firmware on two boards. Pairing accepts one scoreboard and two shotclocks.
+- Keep the bridge and display boards nearby during pairing.
 
-### Issue: Firmware Not Uploading
+### Pairing fails or no beep is heard
 
-- **Solution:** Check the DIP switch settings and ensure that the correct board is selected in the Arduino IDE. Verify that the correct port is being used for uploading.
+- Verify both controller and onboard ESP8266 firmware are installed on the Mega2560+WiFi combo board.
+- Check that the board is in normal run mode after flashing and that its internal Serial3 routing is enabled.
+- The short beep indicates a device acknowledgement; the longer beep and cleared `PAIR` display indicate all three MACs were saved.
 
-### Issue: No Connection
+### Displays do not update
 
-- **Solution:** Double-check the MAC Addresses in the Scoreboard_Controller_WiFi_FW. Ensure the NodeMCU 8266 is correctly configured.
+- Check the A0-selected mode and ensure that the boards are paired into the matching Group 1 or Group 2 bank, or select All to broadcast.
+- Group 1 uses channel 1 and Group 2 uses channel 6. The firmware assigns and saves this channel on each display during pairing.
+- Power-cycle the Mega2560+WiFi board after changing A0; the mode is read at startup.
+
+### Firmware will not upload
+
+- Check the DIP switch programming position, selected processor, USB port, and cable.
+- Confirm the scoreboard `BOARD` setting matches the physical scoreboard wiring.
 
 ---
 

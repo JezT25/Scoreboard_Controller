@@ -34,10 +34,36 @@ void LED_class::ClearBuffer()
     clockModeSaved = false;
 }
 
+void LED_class::SetPairingMode(bool enabled)
+{
+    pairingMode = enabled;
+    if (!enabled)
+    {
+        pTime_Minute = 100;
+        pTime_Second = 100;
+        pClock_Hour = 100;
+        pClock_Minute = 100;
+    }
+}
+
 void LED_class::RefreshBuffer()
 {
     // From dead initialization never to be rerun again
     coldBoot ? ClearBuffer() : static_cast<void>(0);
+
+    if (pairingMode)
+    {
+        UpdateBuffer(12, TIME_MIN_TENS);
+        UpdateBuffer(13, TIME_MIN_ONES);
+        UpdateBuffer(14, TIME_TENS);
+        UpdateBuffer(15, TIME_ONES);
+        for (int i = 0; i < 4; i++)
+        {
+            Dots_Buffer[0][i] = 0;
+            Dots_Buffer[1][i] = 0;
+        }
+        return;
+    }
 
     // Clear screen settings when switching between time/clock modes
     if ((ISystem.TIME_MODE == TIME_CLOCK || ISystem.TIME_MODE == TIME_PAUSE) && pTimeClock != ISystem.TIME_MODE)

@@ -354,8 +354,25 @@ void BUTTON_class::Function()
     if (ISystem.POWER_STATE != POWER_ON)
         return;
 
+    const bool timeMinDown = digitalRead(TIME_MIN) == LOW;
+    const bool timeSecDown = digitalRead(TIME_SEC) == LOW;
+    const bool timeButtonsDown = timeMinDown && timeSecDown;
+    if (timeButtonsDown && !pairChordActive)
+    {
+        pairChordActive = true;
+        pairChordTriggered = false;
+        pairChordStarted = millis();
+    }
+    if (pairChordActive && timeButtonsDown && !pairChordTriggered && millis() - pairChordStarted >= 3000)
+    {
+        WIFI.StartPairing();
+        pairChordTriggered = true;
+    }
+    const bool suppressTimeButtons = pairChordActive || timeButtonsDown;
+
     for (int i = 0; i < BUTTON_DEBOUNCE_COUNT; i++)
     {
+        const bool isTimeButton = buttonPins[i] == TIME_MIN || buttonPins[i] == TIME_SEC;
         int buttonReading = digitalRead(buttonPins[i]);
 
         if (buttonReading != lastButtonState[i])
@@ -371,24 +388,39 @@ void BUTTON_class::Function()
                 {
                     if ((millis() - lastHoldTime[i] >= HOLD_TIME) && (millis() - lastHoldDelayTime[i] >= HOLD_INTERVAL))
                     {
-                        ButtonFunctions(i, true);
+                        if (!(isTimeButton && suppressTimeButtons))
+                            ButtonFunctions(i, true);
                         lastHoldDelayTime[i] = millis();
                     }
                 }
                 else if (!buttonWasPressed[i])
                 {
-                    ButtonFunctions(i);
+                    if (!(isTimeButton && suppressTimeButtons))
+                        ButtonFunctions(i);
                     buttonWasPressed[i] = true;
                     lastHoldTime[i] = millis();
                 }
             }
             else if (buttonReading == HIGH)
             {
-                ButtonReleaseFunctions(i);
+                if (!(isTimeButton && suppressTimeButtons))
+                    ButtonReleaseFunctions(i);
                 buttonWasPressed[i] = false;
             }
         }
 
         lastButtonState[i] = buttonReading;
+    }
+
+    if (pairChordActive && !timeMinDown && !timeSecDown)
+    {
+        if (!pairChordTriggered)
+        {
+            IData.GAME_PERIOD = (IData.GAME_PERIOD == FIRST_PERIOD) ? SECOND_PERIOD : (IData.GAME_PERIOD == SECOND_PERIOD) ? THIRD_PERIOD
+                                  : (IData.GAME_PERIOD == THIRD_PERIOD) ? FOURTH_PERIOD : (IData.GAME_PERIOD == FOURTH_PERIOD) ? FIFTH_PERIOD
+                                  : (IData.GAME_PERIOD == FIFTH_PERIOD) ? NO_PERIOD : FIRST_PERIOD;
+            Beep(BEEP_SHORT, TONE_HIGH);
+        }
+        pairChordActive = false;
     }
 }

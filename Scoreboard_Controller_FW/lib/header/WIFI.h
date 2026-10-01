@@ -15,6 +15,8 @@ class WIFI_class : private HARDWARE_class {
         unsigned long lastWiFiUpdate = 0;
 
     public:
+        void StartPairing();
+        void ReadPairingStatus();
         void SendUpdate();
 };
 

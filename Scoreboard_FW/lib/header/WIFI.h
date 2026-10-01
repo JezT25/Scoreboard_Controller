@@ -11,6 +11,11 @@
 class WIFI_class : private HARDWARE_class {
 	private:
 		static bool coldboot;
+		static uint8_t operatingChannel;
+		static volatile uint8_t assignedChannel;
+		static uint8_t assignmentSourceMac[6];
+		static uint8_t assignmentSourceChannel;
+		static void ApplyAssignedChannel();
 		static void OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len);
 
     public:

@@ -5,6 +5,11 @@
 *******************************************/
 #include "../setup.hpp"
 
+void WIFI_class::StartPairing()
+{
+    Serial3.println("PAIR");
+}
+
 const char *IDATA::toJSON()
 {
     static char buffer[350]; // Allocate just enough buffer space
@@ -53,5 +58,45 @@ void WIFI_class::SendUpdate()
     {
         lastWiFiUpdate = millis();
         Serial3.println(IData.toJSON());
+    }
+}
+
+void WIFI_class::ReadPairingStatus()
+{
+    static char status[24];
+    static uint8_t length = 0;
+    while (Serial3.available())
+    {
+        char value = Serial3.read();
+        if (value == '\r')
+            continue;
+        if (value != '\n')
+        {
+            if (length < sizeof(status) - 1)
+                status[length++] = value;
+            else
+                length = 0;
+            continue;
+        }
+
+        status[length] = '\0';
+        if (strcmp(status, "PAIR:START") == 0)
+        {
+            LED.SetPairingMode(true);
+            Beep(BEEP_LONG, TONE_LOW);
+        }
+        else if (strcmp(status, "PAIR:DONE") == 0)
+        {
+            LED.SetPairingMode(false);
+            Beep(BEEP_LONG, TONE_HIGH);
+        }
+        else if (strcmp(status, "PAIR:FAIL") == 0 || strcmp(status, "PAIR:ALL") == 0 || strcmp(status, "PAIR:ERROR") == 0)
+        {
+            LED.SetPairingMode(false);
+            Beep(BEEP_MED, TONE_LOW);
+        }
+        else if (strncmp(status, "PAIR:FOUND:", 11) == 0)
+            Beep(BEEP_SHORT, TONE_HIGH);
+        length = 0;
     }
 }
