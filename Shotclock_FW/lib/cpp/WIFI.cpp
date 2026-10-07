@@ -65,9 +65,6 @@ void WIFI_class::Initialize() {
 void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
     if (len == 0) return;
 
-void WIFI_class::OnDataRecv(uint8_t *mac, uint8_t *data, uint8_t len) {
-    if (len == 0) return;
-
     // Hot path: a scoreboard update arrives every cycle, so check it before any text parsing
     if (len == sizeof(ScoreboardPacket) + 1)
     {

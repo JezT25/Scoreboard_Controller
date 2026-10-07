@@ -2,7 +2,7 @@
 #include <espnow.h>
 #include <EEPROM.h>
 #include <user_interface.h>
-#include "../Shared/PROTOCOL.h"
+#include "PROTOCOL.h"
 
 #define CHANNEL1 1
 #define CHANNEL2 6

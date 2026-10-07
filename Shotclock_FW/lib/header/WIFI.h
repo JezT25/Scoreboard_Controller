@@ -8,7 +8,7 @@
 #define WIFI_h
 
 #include "../setup.hpp"
-#include "../../../Shared/PROTOCOL.h"
+#include "../../PROTOCOL.h"
 
 class WIFI_class : private HARDWARE_class {
 	private:

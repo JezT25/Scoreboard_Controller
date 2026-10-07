@@ -7,7 +7,7 @@
 #define WIFI_h
 
 #include "../setup.hpp"
-#include "../../../Shared/PROTOCOL.h"
+#include "../../PROTOCOL.h"
 
 #define WIFI_INTERVAL 20
 

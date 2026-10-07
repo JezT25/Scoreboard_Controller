@@ -30,12 +30,12 @@ LED_class LED;
 #include "cpp/TIME.cpp"
 TIME_class TIME;
 
-#include "header/BUTTON.h"
-#include "cpp/BUTTON.cpp"
-BUTTON_class BUTTON;
-
 #include "header/WIFI.h"
 #include "cpp/WIFI.cpp"
 WIFI_class WIFI;
+
+#include "header/BUTTON.h"
+#include "cpp/BUTTON.cpp"
+BUTTON_class BUTTON;
 
 #endif
