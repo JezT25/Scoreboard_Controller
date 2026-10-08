@@ -24,6 +24,8 @@ class BUTTON_class : private HARDWARE_class {
         bool pairChordActive    = false;
         bool pairChordTriggered = false;
         unsigned long pairChordStarted = 0;
+        unsigned int savedFoulHome = 0;
+        unsigned int savedFoulAway = 0;
         unsigned int original_MIN = IData.TIME_MINUTE;
         unsigned int original_SEC = IData.TIME_SECOND;
         unsigned int debounceOffset;

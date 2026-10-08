@@ -62,12 +62,12 @@ The A0 level must be selected before powering the Mega2560+WiFi board. The score
 Pairing stores one scoreboard and two shotclock MAC addresses in the selected group bank in the onboard ESP8266's EEPROM. Group 1 and Group 2 have separate banks. A bank is replaced only after all three devices have been found and acknowledged.
 
 1. Set A0 to Group 1 or Group 2, then power on the Mega2560+WiFi board.
-2. Hold the Mega's `TIME_MIN` and `TIME_SEC` buttons together for three seconds. The controller display shows `PAIR` and the buzzer sounds.
+2. Hold the Mega's `HOME_FOUL` and `AWAY_FOUL` buttons together for three seconds. The controller display shows `PAIR` and the buzzer sounds.
 3. Within the 15-second listening window, power-cycle the scoreboard and both shotclock boards. Each display repeatedly advertises its role and MAC across channels 1, 6, and 11 until it receives a group assignment or live controller data.
 4. The bridge assigns the selected group's channel to each display. The Mega gives a short beep as each device is acknowledged.
 5. When one scoreboard and two shotclocks are confirmed, the bridge saves the three addresses to EEPROM. `PAIR` clears and a longer beep signals success.
 
-If three valid devices are not confirmed before the window expires, pairing fails and the previous saved group remains intact. Unsynchronized displays continue advertising, so you can hold the two time buttons again to reopen pairing without rebooting them.
+If three valid devices are not confirmed before the window expires, pairing fails and the previous saved group remains intact. Unsynchronized displays continue advertising, so you can hold the two foul buttons again to reopen pairing without rebooting them.
 
 Repeat these steps with A0 set to the other group to create or replace that group's separate set. Use separate display sets for Group 1 and Group 2 because each display stores one operating channel.
 
