@@ -30,10 +30,13 @@ volatile bool HARDWARE_class::Clock_Flag    = LOW;
 // D3 rests HIGH by default. When the tens-digit data needs bit-3 LOW, we hold
 // it LOW a little longer than a single write so the hardware-delayed 4028 "D"
 // input reliably samples the LOW level, then release it back HIGH right away.
-// When it needs HIGH, nothing extra is required since that is the resting state.
+// When it needs HIGH, a brief LOW pulse gives the input a rising edge, since a steady HIGH is not registered.
 void IRAM_ATTR HARDWARE_class::SetTensBit3(bool high) {
     if (high) {
         d3Timer.detach();
+        // A steady HIGH is not registered by the delayed 4028 input; it needs a rising edge.
+        digitalWrite(D3, LOW);
+        delayMicroseconds(D3_HIGH_PULSE_US);
         digitalWrite(D3, HIGH);
     } else {
         digitalWrite(D3, LOW);

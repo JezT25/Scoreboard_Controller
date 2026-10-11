@@ -11,6 +11,7 @@
 
 #define LED_FREQ			0.0025
 #define D3_LOW_HOLD_MS		1
+#define D3_HIGH_PULSE_US	5
 
 #define DISABLE_DIGIT		15
 
