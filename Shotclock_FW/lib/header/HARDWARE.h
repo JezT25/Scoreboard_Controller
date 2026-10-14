@@ -9,7 +9,8 @@
 
 #include "../setup.hpp"
 
-#define LED_FREQ			0.0025
+// Ticker truncates 0.0025 s to 2 ms, so a 2-tick slot keeps the original 12 ms refresh cycle
+#define LED_TICK_MS			1
 
 #define DISABLE_DIGIT		15
 
@@ -32,8 +33,11 @@
 class HARDWARE_class {
     private:
         volatile int CurrentSegment  = TENS_SEGMENT;
+        volatile int Phase           = 0;   // 0/1 = first/second tick of a slot, 2 = powered off and bus blanked
         Ticker timer;
         void IRAM_ATTR DisplayLED();
+        void IRAM_ATTR GetDigits(int Segment, int &TENS, int &ONES);
+        void IRAM_ATTR ClearBus();
 
     protected:
         static volatile int Segment_1;
