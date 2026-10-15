@@ -33,11 +33,10 @@
 class HARDWARE_class {
     private:
         volatile int CurrentSegment  = TENS_SEGMENT;
-        volatile int Phase           = 0;   // 0/1 = first/second tick of a slot, 2 = powered off and bus blanked
+        volatile int Phase           = 0;
         Ticker timer;
         void IRAM_ATTR DisplayLED();
         void IRAM_ATTR GetDigits(int Segment, int &TENS, int &ONES);
-        void IRAM_ATTR ClearBus();
 
     protected:
         static volatile int Segment_1;

@@ -12,17 +12,6 @@ volatile int HARDWARE_class::Colon_Flag     = GAME_MINUTE;
 volatile bool HARDWARE_class::Timeout_Flag  = LOW;
 volatile bool HARDWARE_class::Power_Flag    = POWER_ON;
 
-void IRAM_ATTR HARDWARE_class::ClearBus() {
-    digitalWrite(D0, HIGH);
-    digitalWrite(D1, HIGH);
-    digitalWrite(D2, HIGH);
-    digitalWrite(D3, HIGH);
-    digitalWrite(D4, HIGH);
-    digitalWrite(D5, HIGH);
-    digitalWrite(D6, HIGH);
-    digitalWrite(D7, HIGH);
-}
-
 void IRAM_ATTR HARDWARE_class::GetDigits(int Segment, int &TENS, int &ONES) {
     if (Segment == SC_SEGMENT && Segment_3 == TWO_DIGIT_DASH)
     {
@@ -38,27 +27,13 @@ void IRAM_ATTR HARDWARE_class::GetDigits(int Segment, int &TENS, int &ONES) {
     if(Segment == ONES_SEGMENT && Colon_Flag == GAME_SECONDS) ONES = DISABLE_DIGIT;
 }
 
-/*
-    Each slot lasts 2 ticks. A 4543 latches the bus on its LD falling edge, and the slot is
-    always closed with the bus blank (1111) so only the selected group is lit.
-    D3 reaches the tens 4543 through the hardware delay, so for digits 0-7 (D3 LOW) it must go HIGH
-    at least one delay time BEFORE LD falls, otherwise the latch captures 0111 (a stuck "7").
-
-    Digit slot  tick 0: LD low -> write bus -> LD high (D3 was already staged in the previous colon slot)
-                tick 1: hold, LD stays high (lit)
-    Colon slot  tick 0: bus all HIGH while the group's LD is still high (delay window; D3 is already HIGH for 8, 9, blank)
-                tick 1: LD low (latches blank) -> stage D3 for the next digit slot -> colon/timeout select
-    LD is the BCD decoder output selected by D8-D10 (no dedicated pin); code 0 is the NC "transition" state.
-*/
 void IRAM_ATTR HARDWARE_class::DisplayLED() {
     if(Power_Flag != POWER_ON)
     {
-        // Same blank-then-latch order as a colon slot so the last lit group latches blank
-        if (Phase != 2) { ClearBus(); Phase = 2; }
-        else GPOC = (1 << D8) | (1 << D9) | (1 << D10);
+        GPOC = (1 << D8) | (1 << D9) | (1 << D10);
+        Phase = 0;
         return;
     }
-    if (Phase == 2) Phase = 0;
 
     if (CurrentSegment == TENS_SEGMENT || CurrentSegment == ONES_SEGMENT || CurrentSegment == SC_SEGMENT) {
         if (Phase == 0)
@@ -89,12 +64,6 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
     }
     else if (Phase == 0)
     {
-        ClearBus();
-        Phase = 1;
-    }
-    else
-    {
-        // LD falls with the bus (and delayed D3) already blank
         GPOC = (1 << D8) | (1 << D9) | (1 << D10);
 
         if (Colon_Flag == GAME_MINUTE && CurrentSegment == UPCOL_SEGMENT)
@@ -115,6 +84,10 @@ void IRAM_ATTR HARDWARE_class::DisplayLED() {
         GetDigits(CurrentSegment == TOUT_SEGMENT ? TENS_SEGMENT : CurrentSegment + 1, TENS, ONES);
         digitalWrite(D3, (TENS & 8) >> 3);
 
+        Phase = 1;
+    }
+    else
+    {
         Phase = 0;
         CurrentSegment = CurrentSegment == TOUT_SEGMENT ? TENS_SEGMENT : ++CurrentSegment;
     }
